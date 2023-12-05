@@ -9,6 +9,7 @@ public class Window extends JFrame{
 		setResizable(false);
 		
 		setLayout(new GridLayout(1, 2));
+		
 		Board gameBoard = new Board(this, 400);
 		add(gameBoard);
 		gameBoard.start();
