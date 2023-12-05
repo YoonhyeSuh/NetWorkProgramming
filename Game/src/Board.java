@@ -1,4 +1,7 @@
+import java.awt.event.ActionListener;
 
-public class Board {
+import javax.swing.JPanel;
+
+public class Board extends JPanel implements ActionListener {
 
 }
