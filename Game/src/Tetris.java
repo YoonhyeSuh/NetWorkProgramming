@@ -115,13 +115,15 @@ public class Tetris extends JFrame implements Runnable{
 	Thread tetris;
 	
 	JMenuBar menuBar;
-	JMenu menu_game, menu_file, menu_guide;
-	JMenuItem gameStart, gameExit, programExit, gameSave, gameLoad, gameTip;
+	JMenu menu_game, menu_guide;
+	JMenuItem gameStart, gameExit, programExit, gameTip;
 	JButton btnGameReStart, btnGamePause;
 	JLabel textGameScore, timerLabel;
 	ButtonGroup radioGroup = new ButtonGroup();
 	
 	public Tetris() {
+		setTitle("Tetris :D");
+	
 		// 메뉴 구성
 		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -129,9 +131,6 @@ public class Tetris extends JFrame implements Runnable{
 		
 		menu_game = new JMenu("게임");
 		menuBar.add(menu_game);
-		
-		menu_file = new JMenu("파일");
-		menuBar.add(menu_file);
 		
 		menu_guide = new JMenu("도움말");
 		menuBar.add(menu_guide);
@@ -145,22 +144,8 @@ public class Tetris extends JFrame implements Runnable{
 		programExit = new JMenuItem("프로그램 종료하기");
 		programExit.addActionListener(myActionListener);
 		
-		gameSave = new JMenuItem("게임 저장하기");
-		gameSave.addActionListener(myActionListener);
-		
-		gameLoad = new JMenuItem("게임 불러오기");
-		gameLoad.addActionListener(myActionListener);
-		
 		gameTip = new JMenuItem("게임 도움말");
 		gameTip.addActionListener(myActionListener);
-		
-		
-		
-		btnGameReStart = new JButton("재시작");
-		btnGameReStart.addActionListener(myActionListener);
-		
-		btnGamePause = new JButton("일시 정지");
-		btnGamePause.addActionListener(myActionListener);
 		
 		textGameScore = new JLabel();
 		textGameScore.setText("  Score : 0");
@@ -170,8 +155,11 @@ public class Tetris extends JFrame implements Runnable{
 		gameTimer = new Timer(1000, new ActionListener() {
 		        public void actionPerformed(ActionEvent evt) {
 		            timePassed++; // 1초마다 경과 시간 증가
-		            timerLabel.setText("  Timer: " + timePassed);
-		            if (timePassed >= 60) {
+		            int minutes = timePassed / 60;
+		            int seconds = timePassed % 60;
+		            String formattedTime = String.format("  Timer: %02d:%02d", minutes, seconds);
+		            timerLabel.setText(formattedTime); // Update the timer label
+		            if (timePassed >= 180) {
 		                End(); // 60초가 되면 게임 종료
 		            }
 		        }
@@ -182,15 +170,9 @@ public class Tetris extends JFrame implements Runnable{
 		menu_game.add(gameStart);
 		menu_game.add(gameExit);
 		menu_game.add(programExit);
-		
-		menu_file.add(gameSave);
-		menu_file.add(gameLoad);
-		
+	
 		menu_guide.add(gameTip);
 		
-		menuBar.add(btnGameReStart);
-		menuBar.add(btnGamePause);
-
 		
 		menuBar.add(textGameScore);
 		
@@ -528,55 +510,7 @@ public class Tetris extends JFrame implements Runnable{
 		return checkFlag;
 	}
 	
-	public void saveRecordArray() { // 현재 게임 내용 저장
-		String output = "C:\\homework\\tetrisResult.txt"; // c\:homework 폴더
-		File file = new File(output);
-		try {
-			PrintWriter pw = new PrintWriter(file);
-			for(int i = 0 ; i < formHeight ; i++) {
-				for(int j = 0 ; j < formWidth ; j++) {
-					pw.print(recordArray[i][j]+ " ");
-				}
-				pw.println("");
-			}
-			pw.print(gameScore);
-			pw.flush();
-			pw.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	public void loadRecordArray() { // 저장된 게임 내용 불러오기
-		String output = "C:\\homework\\tetrisResult.txt"; // c\:homework 폴더
-		File file = new File(output);
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(file));
-			String str;
-			for(int i = 0 ; i <= formHeight ; i++) {
-				if(i == formHeight) {
-					str = br.readLine();
-					gameScore = Integer.parseInt(str);
-					return;
-				}
-				else {
-					str = br.readLine();
-				}
-				String [] splitNum = str.split(" ");
-				for(int j = 0 ; j < formWidth ; j++) {	
-					if(str==null)
-						break;
-					recordArray[i][j] = Integer.parseInt(splitNum[j]);	
-				}
-				
-				System.out.println("");
-			}	
-		}catch (IOException e) {
-		e.printStackTrace();
-		}
-	}
-	
+
 	class MyKeyListener extends KeyAdapter{
 		@Override
 		public void keyTyped(KeyEvent e) {
@@ -614,7 +548,6 @@ public class Tetris extends JFrame implements Runnable{
 			String radio = e.getActionCommand();
 			
 			if(e.getSource() == gameStart) {
-				focusUnCheck();
 				needShape = true;
 				main.setFocusable(true);
 				start();
@@ -626,6 +559,7 @@ public class Tetris extends JFrame implements Runnable{
 				resetRecordArray(); // 배열 초기화
 				drawBackGround(); // 테트리스 판 초기화
 				gameScore = 0; // 점수 초기화
+				timePassed=0;
 				textGameScore.setText("  Score : "+gameScore); // 점수판 초기화
 			}
 			else if(e.getSource() == programExit) { // 완전 창을 종료
@@ -633,44 +567,17 @@ public class Tetris extends JFrame implements Runnable{
 				dispose();
 				System.exit(0);
 			}
-			else if(e.getSource() == gameSave) {
-				gameEnd = true; // 쓰레드 멈추기
-				saveRecordArray(); // 게임 상태 저장
-				JOptionPane.showMessageDialog(null, "저장되었습니다!", "테트리스", JOptionPane.INFORMATION_MESSAGE);
-			}
-			else if(e.getSource() == gameLoad) { 
-				gameEnd = true; // 쓰레드 멈추기
-				loadRecordArray(); // recordArray에 복사 완료
-				drawBackGround(); // 불러온 배열 테트리스판에 그리기
-				textGameScore.setText("  Score : "+gameScore); // 점수 내용도 불러오기
-			}
 			else if(e.getSource() == gameTip) {
 				JOptionPane.showMessageDialog(null, "테트리스 게임 도움말\n기본 조작키 : 왼쪽,오른쪽,아래 방향키 + 회전 : 스페이스바"
 						+ "\n**메뉴 설명**"
 						+ "\n - 게임 시작 : 새 테트리스가 시작됩니다"
 						+ "\n - 게임 종료 : 진행중인 테트리스가 종료됩니다"
 						+ "\n - 프로그램 종료 : 게임 창이 종료됩니다"
-						+ "\n - 게임 저장 : 진행중인 테트리스가 기록됩니다."
-						+ "\n - 게임 불러오기 : 저장했던 테트리스를 불러옵니다."
-						+ "\n ** 게임 저장 및 불러오기 이후 게임 시작을 다시 누르면 이어서 게임이 진행됩니다 **"
-						+ "\n - 게임 재시작 및 일시중지 : 현재 게임을 일시중지하고 다시 재시작합니다."
-						+ "\n - 난이도 : 블럭의 속도가 달라지며, 스코어도 난이도에 따라 부여됩니다."
 						, "테트리스 도움말", JOptionPane.PLAIN_MESSAGE);
 			}
-			else if(e.getSource() == btnGameReStart) { // 재시작함수(정지된 상태 그대로 다시 시작시킨다)
-				needShape = false;
-				start();
-				focusUnCheck();
-			}
-			else if(e.getSource() == btnGamePause) { // 일시 정지
-				gameEnd = true;
-				focusUnCheck();
-			}
+
 		}
 	};
 	
-	void focusUnCheck() { // 버튼에 focus 해제
-		btnGameReStart.setFocusable(false);
-		btnGamePause.setFocusable(false);
-	}
+	
 }
