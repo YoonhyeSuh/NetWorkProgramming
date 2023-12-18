@@ -1,26 +1,8 @@
-import java.awt.Color;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
 
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.Timer;
+import javax.swing.*;
 
 class Element{
 	//중심점 x,y를 잡고 이것을 중심으로 +-으로 도형 표현할 것이다.
@@ -115,14 +97,13 @@ public class Tetris extends JFrame implements Runnable{
 	
 	static boolean gameEnd = false;
 	
-	 // 난이도 중 기본값
 	int gameScore = 0;
 	int plusScore = 10;
 	int threadSpeed = 600;
 	
 	int recordArray[][]; // 기록용 배열
 	
-	JButton b[][];
+	JButton board[][];
 	
 	int shapeNumber; // random함수로 0~6까지 나와서 makeShape함수의 변수로 사용
 	Shape randomFigure; // makeShape의 결과물(Element 배열을 가지고 있다)
@@ -138,7 +119,6 @@ public class Tetris extends JFrame implements Runnable{
 	JMenuItem gameStart, gameExit, programExit, gameSave, gameLoad, gameTip;
 	JButton btnGameReStart, btnGamePause;
 	JLabel textGameScore, timerLabel;
-	JRadioButton radioHighLevel, radioNormalLevel, radioLowLevel;
 	ButtonGroup radioGroup = new ButtonGroup();
 	
 	public Tetris() {
@@ -226,13 +206,13 @@ public class Tetris extends JFrame implements Runnable{
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // 정상 종료
 		
-		b = new JButton[formHeight][formWidth];
+		board = new JButton[formHeight][formWidth];
 		
 		for(int row = 0 ; row < formHeight ; row++) {
 			for(int col = 0 ; col < formWidth ; col++) {
-				b[row][col] = new JButton();
-				main.add(b[row][col]);
-				JButton bj = b[row][col];
+				board[row][col] = new JButton();
+				main.add(board[row][col]);
+				JButton bj = board[row][col];
 				bj.addKeyListener(new MyKeyListener());
 				}
 			}
@@ -333,21 +313,21 @@ public class Tetris extends JFrame implements Runnable{
 		for(int row = 2 ; row < formHeight ; row++) {
 			for(int col = 0 ; col < formWidth ; col++) {
 				if(recordArray[row][col] == -1)
-					b[row][col].setBackground(Color.white);
+					board[row][col].setBackground(Color.white);
 				else
-					b[row][col].setBackground(colorBox[recordArray[row][col]]);
+					board[row][col].setBackground(colorBox[recordArray[row][col]]);
 			}
 		}
 		for(int i = 0 ; i <= 1 ; i++) {
 			for(int j = 0 ; j < formWidth ; j++) {
-				b[i][j].setBackground(Color.black);
+				board[i][j].setBackground(Color.black);
 			}
 		}
 	}
 	
 	public void drawCurrentShape() { // 현재 도형을 그리기
 		for(int i = 0 ; i < 4 ; i++) {
-			JButton jb = b[eleNew[i].centerHeight][eleNew[i].centerWidth];
+			JButton jb = board[eleNew[i].centerHeight][eleNew[i].centerWidth];
 			jb.setBackground(colorBox[shapeNumber]);
 		}
 	}
@@ -685,19 +665,6 @@ public class Tetris extends JFrame implements Runnable{
 			else if(e.getSource() == btnGamePause) { // 일시 정지
 				gameEnd = true;
 				focusUnCheck();
-			}
-			//난이도 radio button
-			else if(radio.equals(radioHighLevel.getText())) {
-				plusScore = 30;
-				threadSpeed = 300;
-			}
-			else if(radio.equals(radioNormalLevel.getText())) {
-				plusScore = 10;
-				threadSpeed = 600;
-			}
-			else if(radio.equals(radioLowLevel.getText())) {
-				plusScore = 5;
-				threadSpeed = 1000;
 			}
 		}
 	};
