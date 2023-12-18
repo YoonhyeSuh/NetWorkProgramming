@@ -94,6 +94,7 @@ class Shape{
 
 public class Tetris extends JFrame implements Runnable{
 	Timer gameTimer;
+	
 	int timePassed = 0;
 	
 	static int formHeight = 20;
@@ -136,7 +137,7 @@ public class Tetris extends JFrame implements Runnable{
 	JMenu menu_game, menu_file, menu_guide;
 	JMenuItem gameStart, gameExit, programExit, gameSave, gameLoad, gameTip;
 	JButton btnGameReStart, btnGamePause;
-	JLabel textGameScore, textLevelInfo;
+	JLabel textGameScore, timerLabel;
 	JRadioButton radioHighLevel, radioNormalLevel, radioLowLevel;
 	ButtonGroup radioGroup = new ButtonGroup();
 	
@@ -184,18 +185,19 @@ public class Tetris extends JFrame implements Runnable{
 		textGameScore = new JLabel();
 		textGameScore.setText("  Score : 0");
 		
-		textLevelInfo = new JLabel("  난이도  ");
+		timerLabel = new JLabel("  Timer: 0");
 		
-		radioHighLevel = new JRadioButton("상");
-		radioHighLevel.addActionListener(myActionListener);
-		radioNormalLevel = new JRadioButton("중");
-		radioNormalLevel.addActionListener(myActionListener);
-		radioNormalLevel.setSelected(true);
-		radioLowLevel = new JRadioButton("하");
-		radioLowLevel.addActionListener(myActionListener);
-		radioGroup.add(radioHighLevel);
-		radioGroup.add(radioNormalLevel);
-		radioGroup.add(radioLowLevel);
+		gameTimer = new Timer(1000, new ActionListener() {
+		        public void actionPerformed(ActionEvent evt) {
+		            timePassed++; // 1초마다 경과 시간 증가
+		            timerLabel.setText("  Timer: " + timePassed);
+		            if (timePassed >= 60) {
+		                End(); // 60초가 되면 게임 종료
+		            }
+		        }
+		    });
+		
+
 		
 		menu_game.add(gameStart);
 		menu_game.add(gameExit);
@@ -208,13 +210,11 @@ public class Tetris extends JFrame implements Runnable{
 		
 		menuBar.add(btnGameReStart);
 		menuBar.add(btnGamePause);
-		
-		menuBar.add(textLevelInfo);
-		menuBar.add(radioHighLevel);
-		menuBar.add(radioNormalLevel);
-		menuBar.add(radioLowLevel);
+
 		
 		menuBar.add(textGameScore);
+		
+		menuBar.add(timerLabel);
 		
 		setSize(600, 1000); // JFrame 사이즈
 		
@@ -249,7 +249,9 @@ public class Tetris extends JFrame implements Runnable{
 		fullRow = false;
 		gameEnd = false;
 		tetris = new Thread(this);
+		gameTimer.start();
 		tetris.start();
+		
 	}
 
 	public void run() {
@@ -263,7 +265,7 @@ public class Tetris extends JFrame implements Runnable{
 					
 					if(checkShapetoShape(eleNew)) { // 종료조건 : 새로 생성되는 도형과 겹칠 시
 						drawCurrentShape(); // 도형 겹치는거 보여주고 종료
-						gameEnd = true;
+						gameTimer.stop(); 
 						JOptionPane.showMessageDialog(null, "Game Over!\n"
 								+ "블럭 생성 구간까지 벽돌이 쌓이면 종료입니다.\n"
 								+ "최종 스코어 : " + gameScore, "테트리스", JOptionPane.ERROR_MESSAGE);
@@ -286,6 +288,18 @@ public class Tetris extends JFrame implements Runnable{
 		} catch (Exception e) {
 			System.out.println(e);
 		}
+	}
+	
+	public void End() {
+		
+		gameEnd = true;
+		gameTimer.stop(); 
+		JOptionPane.showMessageDialog(null, "Game Over!\n"
+				+ "시간 경과!\n"
+				+ "최종 스코어 : " + gameScore, "테트리스", JOptionPane.ERROR_MESSAGE);
+		resetRecordArray();
+		drawBackGround();
+		
 	}
 	
 	public Shape makeShape(int shapeNumber) { // 랜덤 도형 생성 함수
@@ -691,8 +705,5 @@ public class Tetris extends JFrame implements Runnable{
 	void focusUnCheck() { // 버튼에 focus 해제
 		btnGameReStart.setFocusable(false);
 		btnGamePause.setFocusable(false);
-		radioHighLevel.setFocusable(false);
-		radioNormalLevel.setFocusable(false);
-		radioLowLevel.setFocusable(false);
 	}
 }
