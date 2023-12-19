@@ -36,6 +36,7 @@ public class Server extends JFrame implements ActionListener{
    private static int myscore =0;
    private JLabel yourScore;
    private Tetris game;
+   private int cha;//점수 차
    
    
    
@@ -180,17 +181,20 @@ public class Server extends JFrame implements ActionListener{
                if(score == -1) {
 //                  yourScore.setText("Opponent's Score: "+-(score));
                }
-               else if(score >= 0) {            
+               else {            
                   String winner = "";
+                  cha = 0;
                   if(score > myscore) {
                      winner = "상대편";
+                     cha = score - myscore;
                   }else if(score < myscore) {
                      winner = "당신";
+                     cha = myscore - score;
                   }else {
                      winner= "동점";
                   }
                   if(!server) {
-                  GameEnd(winner);
+                  GameEnd(winner, cha);
                   }
                   
                
@@ -206,12 +210,12 @@ public class Server extends JFrame implements ActionListener{
    
    
    
-    private void GameEnd(String winner) throws IOException {
+    private void GameEnd(String winner, int cha) throws IOException {
     	server = true;
         if (winner.equals("동점")) {
             JOptionPane.showMessageDialog(null, "게임 종료!\n동점입니다!\n5초 뒤 다시 재시작 합니다.", "user1", JOptionPane.ERROR_MESSAGE);
         } else {
-            JOptionPane.showMessageDialog(null, "게임 종료!\n" + winner + "이 이겼습니다!\n5초 뒤 다시 재시작 합니다.", "user1", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "게임 종료!\n" +cha+"점차로 "+ winner + "이 이겼습니다!\n5초 뒤 다시 재시작 합니다.", "user1", JOptionPane.ERROR_MESSAGE);
         }
 
         try {

@@ -28,9 +28,10 @@ public class Client extends JFrame implements ActionListener {
    private JTextField sender = null; // JTextField 객체로서 보내는 정보를 담는 객체
    private gameReciever GR;
    //게임용
-   private static int myscore =0;
-   private JLabel yourScore;
+   private static int myscore =0;//이클래스만 쓰는 나의 점수
+   private JLabel yourScore;//너의 점수
    private Tetris game;
+   private int cha;//점수 차
   
    
    public Client() {
@@ -161,15 +162,18 @@ public class Client extends JFrame implements ActionListener {
                   }
                   else{
                      String winner = "";
-                     if( score > myscore) {
+                     cha = 0;
+                     if(score > myscore) {
                         winner = "상대편";
-                     }else if(score < myscore){
+                        cha = score - myscore;
+                     }else if(score < myscore) {
                         winner = "당신";
+                        cha = myscore - score;
                      }else {
                         winner= "동점";
                      }
                      if(!client) {
-                     GameEnd(winner);
+                     GameEnd(winner, cha);
                      }
                   }
                   
@@ -181,12 +185,12 @@ public class Client extends JFrame implements ActionListener {
    }
    }
    
-    private void GameEnd(String winner) throws IOException {
+    private void GameEnd(String winner, int cha) throws IOException {
     	client = true;
         if (winner.equals("동점")) {
             JOptionPane.showMessageDialog(null, "게임 종료!\n동점입니다!\n5초 뒤 다시 재시작 합니다.", "user2", JOptionPane.ERROR_MESSAGE);
         } else {
-            JOptionPane.showMessageDialog(null, "게임 종료!\n" + winner + "이 이겼습니다!\n5초 뒤 다시 재시작 합니다.", "user2", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "게임 종료!\n" +cha+"점차로 "+ winner + "이 이겼습니다!\n5초 뒤 다시 재시작 합니다.", "user2", JOptionPane.ERROR_MESSAGE);
         }
 
         try {

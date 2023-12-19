@@ -137,7 +137,7 @@ public class Tetris extends JFrame implements Runnable{
       int seconds = timePassed % 60;
       String formattedTime = String.format("  Timer: %02d:%02d", minutes, seconds);
       timerLabel.setText(formattedTime);
-      if (timePassed >= 5) {// 2분후 게임 끝남
+      if (timePassed >= 120) {// 2분후 게임 끝남
             gameTimer.stop();            
                End();
             }
@@ -195,11 +195,11 @@ public class Tetris extends JFrame implements Runnable{
                needShape = false; // 생성 후 false로 바꿔준다.
                if(checkShapetoShape(eleNew)) { // 종료조건 : 새로 생성되는 도형과 겹칠 시
                   drawCurrentShape(); // 도형 겹치는거 보여주고 종료
-//                   JOptionPane.showMessageDialog(null, "Game Over!\n"
-//                                 + "블럭 생성 구간까지 벽돌이 쌓이면 종료입니다.\n"
-//                                 + "최종 스코어 : " + gameScore+"\n 상대방은 아직 게임 중이니 기다려주세요.", "테트리스", JOptionPane.ERROR_MESSAGE);
-//                           resetRecordArray();
-//                           drawBackGround();
+                   JOptionPane.showMessageDialog(null, "Game Over!\n"
+                                 + "블럭 생성 구간까지 벽돌이 쌓이면 종료입니다.\n"
+                                 + "최종 스코어 : " + gameScore+"\n 상대방은 아직 게임 중이니 기다려주세요.", "테트리스", JOptionPane.ERROR_MESSAGE);
+                           //resetRecordArray();
+                          // drawBackGround();
                            break;
 
                }
@@ -226,6 +226,7 @@ public class Tetris extends JFrame implements Runnable{
 	        tetris.interrupt();
 	    }
 
+	    
 	    // 게임 변수 재설정
 	    gameEnd = false;
 	    gameScore = 0;
@@ -241,6 +242,7 @@ public class Tetris extends JFrame implements Runnable{
 	}
    
    public void End() {
+	   
       gameEnd = true;
       gameScore = 0;
       textGameScore.setText("Score : "+gameScore);
