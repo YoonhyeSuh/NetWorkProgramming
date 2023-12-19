@@ -206,18 +206,18 @@ public class Server extends JFrame implements ActionListener{
    
    
    
-    private void GameEnd(String winner) {
+    private void GameEnd(String winner) throws IOException {
     	server = true;
         if (winner.equals("동점")) {
-            JOptionPane.showMessageDialog(null, "게임 종료!\n동점입니다!\n5초 뒤 다시 재시작 합니다.", "테트리스", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "게임 종료!\n동점입니다!\n5초 뒤 다시 재시작 합니다.", "user1", JOptionPane.ERROR_MESSAGE);
         } else {
-            JOptionPane.showMessageDialog(null, "게임 종료!\n" + winner + "이 이겼습니다!\n5초 뒤 다시 재시작 합니다.", "테트리스", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "게임 종료!\n" + winner + "이 이겼습니다!\n5초 뒤 다시 재시작 합니다.", "user1", JOptionPane.ERROR_MESSAGE);
         }
 
         try {
-            sendScoreToClient(); // 서버에서 클라이언트에게 스코어 전송
+        	sendScoreToClient();
             Thread.sleep(5000); // 5초 대기
-        } catch (IOException | InterruptedException e) {
+        } catch ( InterruptedException e) {
             handleError(e.getMessage());
         }
 

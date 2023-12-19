@@ -137,7 +137,7 @@ public class Tetris extends JFrame implements Runnable{
       int seconds = timePassed % 60;
       String formattedTime = String.format("  Timer: %02d:%02d", minutes, seconds);
       timerLabel.setText(formattedTime);
-      if (timePassed >= 120) {// 2분후 게임 끝남
+      if (timePassed >= 5) {// 2분후 게임 끝남
             gameTimer.stop();            
                End();
             }
