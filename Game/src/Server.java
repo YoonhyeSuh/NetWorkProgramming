@@ -15,16 +15,20 @@ public class Server extends JFrame implements ActionListener{
    //버퍼
    private BufferedReader in = null;
    private BufferedWriter out = null;
+   private BufferedReader sin = null;
+   private BufferedWriter sout = null;
    private BufferedReader cin = null;
    private BufferedWriter cout = null;
    
    //서버 소켓
    private ServerSocket listener = null;
    private ServerSocket glistener = null;
+   private ServerSocket ulistener = null;
    
    //소켓
    private Socket socket = null;
    private Socket gsocket = null;
+   private Socket usocket = null;
    
    //메세지용
    private Receiver receiver; // JTextArea를 상속받고 Runnable 인터페이스를 구현한 클래스로서 받은 정보를 담는 객체
@@ -37,6 +41,7 @@ public class Server extends JFrame implements ActionListener{
    private JLabel yourScore;
    private Tetris game;
    private int cha;//점수 차
+   private int Uscore;//너의 점수
    
    
    
@@ -97,11 +102,13 @@ public class Server extends JFrame implements ActionListener{
    private void setupConnection() throws IOException{
       listener = new ServerSocket(9999); //메세지용 서버 소켓 생성
       glistener = new ServerSocket(9998); //최종 점수용 서버 소켓 생성
+      ulistener = new ServerSocket(9997); //최종 점수용 서버 소켓 생성
       
       receiver.append("상대방을 기다리는 중입니다...\n");
       
       socket = listener.accept(); //클라이언트로부터 연결 요청 대기
       gsocket = glistener.accept(); //클라이언트로부터 연결 요청 대기
+      usocket = ulistener.accept(); //클라이언트로부터 연결 요청 대기
       
       receiver.append("상대방2이 입장하였습니다.\n"); 
       
@@ -111,6 +118,9 @@ public class Server extends JFrame implements ActionListener{
       in = new BufferedReader(new InputStreamReader(socket.getInputStream())); //메세지용 입력 스트림
       out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())); //메세지용 출력 스트림
    
+      
+      sin = new BufferedReader(new InputStreamReader(usocket.getInputStream())); //현재 점수용
+      sout = new BufferedWriter(new OutputStreamWriter(usocket.getOutputStream())); //현재 점수용
       
       cin = new BufferedReader(new InputStreamReader(gsocket.getInputStream())); //최종 점수 입력 스트림
       cout = new BufferedWriter(new OutputStreamWriter(gsocket.getOutputStream())); //최종 점수 출력 스트림
@@ -178,6 +188,8 @@ public class Server extends JFrame implements ActionListener{
                
             try {               
                score =Integer.parseInt(cin.readLine());
+               Uscore =Integer.parseInt(sin.readLine());
+               yourScore.setText("Opponent's Score: "+Uscore);
                if(score == -1) {
 //                  yourScore.setText("Opponent's Score: "+-(score));
                }
@@ -242,6 +254,9 @@ public class Server extends JFrame implements ActionListener{
           cout.write("-1\n");
           cout.flush();
        }
+       sout.write(myscore+"\n");
+       sout.flush();
+       
    }
 
    
