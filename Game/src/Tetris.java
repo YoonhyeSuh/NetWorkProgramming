@@ -137,7 +137,7 @@ public class Tetris extends JFrame implements Runnable{
       int seconds = timePassed % 60;
       String formattedTime = String.format("  Timer: %02d:%02d", minutes, seconds);
       timerLabel.setText(formattedTime);
-      if (timePassed >= 120) {// 2분후 게임 끝남
+      if (timePassed >= 5) {// 2분후 게임 끝남
             gameTimer.stop();            
                End();
             }
@@ -198,8 +198,8 @@ public class Tetris extends JFrame implements Runnable{
                    JOptionPane.showMessageDialog(null, "Game Over!\n"
                                  + "블럭 생성 구간까지 벽돌이 쌓이면 종료입니다.\n"
                                  + "최종 스코어 : " + gameScore+"\n 상대방은 아직 게임 중이니 기다려주세요.", "테트리스", JOptionPane.ERROR_MESSAGE);
-                           resetRecordArray();
-                           drawBackGround();
+                          resetRecordArray();
+                          drawBackGround();
                            break;
 
                }
@@ -218,6 +218,26 @@ public class Tetris extends JFrame implements Runnable{
       } catch (Exception e) {
          System.out.println(e);
       }
+   }
+   
+   public void restartGame() {
+       // 현재 게임 스레드 멈춤
+       if (tetris != null && tetris.isAlive()) {
+           tetris.interrupt();
+       }
+
+       // 게임 변수 재설정
+       gameEnd = false;
+       gameScore = 0;
+       timePassed = 0;
+       needShape = true;
+
+       // 보드 clear
+       resetRecordArray();
+       drawBackGround();
+
+       //새로 시작
+       start();
    }
    
    public void End() {

@@ -1,7 +1,6 @@
 import java.awt.*;
 
 
-
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
@@ -9,229 +8,229 @@ import javax.swing.*;
 
 
 
-
 public class Client extends JFrame implements ActionListener {
-	
-	static boolean client = false;//GameEnd를 한번만 호출 하기 위한 변수
+   
+   static boolean client = false;
 
-	//버퍼
-	private BufferedReader in = null;
-	private BufferedWriter out = null;
-	private BufferedReader sin = null;
-	private BufferedWriter sout = null;
-	private BufferedReader cin = null;
-	private BufferedWriter cout = null;
-	
-	//소켓
-	private Socket socket = null;	
-	private Socket gsocket = null;
-	private Socket ssocket = null;
-	
-	//메세지용
-	private Receiver receiver = null; // JTextArea를 상속받고 Runnable 인터페이스를 구현한 클래스로서 받은 정보를 담는 객체
-	private JTextField sender = null; // JTextField 객체로서 보내는 정보를 담는 객체
-	private JPanel chat;
-	
-	//테트리스용
-	private gameReciever GR;
-	private static int myscore =0;//클라이언트 내에서만 쓸 내 점수 변수
-	private JLabel yourScore;
-	private Tetris game;
-	public static int choiceC=1;
-	
-	public Client() {
-		setTitle("Tetris :D");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //프레임 종료 버튼을 클릭하면 프로그램 종료
-		Container c = getContentPane();	
-		
-		c.setLayout(new GridLayout(1,2));
-		
-		//테트리스 배치
-		game = new Tetris();		
-		GR = new gameReciever();
-		c.add(game.left);
-		
-		//채팅 배치
-		chat = new JPanel();
-		chat.setLayout(new BorderLayout());
-		receiver = new Receiver(); // 클라이언트에서 받은 메시지를 출력할 컴퍼넌트
-		receiver.setEditable(false); // 편집 불가
-		
-		yourScore = new JLabel();//상대방 점수 보여주기
-		yourScore.setText("Opponent's Score: 0");
+   private BufferedReader in = null;
+   private  BufferedWriter out = null;
+   private BufferedReader sin = null;
+   private BufferedWriter sout = null;
+   private BufferedReader cin = null;
+   private BufferedWriter cout = null;
+   private Socket socket = null;
+   private Socket gsocket = null;
+   private Receiver receiver = null; // JTextArea를 상속받고 Runnable 인터페이스를 구현한 클래스로서 받은 정보를 담는 객체
+   private JTextField sender = null; // JTextField 객체로서 보내는 정보를 담는 객체
+   private gameReciever GR;
+   private static int myscore =0;
+   private JLabel yourScore;
+   private Tetris game;
+   private JPanel chat;
+   
+   public Client() {
+      setTitle("Tetris :D");
+      setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //프레임 종료 버튼을 클릭하면 프로그램 종료
+      Container c = getContentPane();   
+      
+      c.setLayout(new GridLayout(1,2));
+      
+      game = new Tetris();
+      
+      
+      //테트리스 배치
+      c.add(game.left);
+      
+      //채팅 배치
+      chat = new JPanel();
+      chat.setLayout(new BorderLayout());
+      receiver = new Receiver(); // 클라이언트에서 받은 메시지를 출력할 컴퍼넌트
+      receiver.setEditable(false); // 편집 불가
+      
+      yourScore = new JLabel();
+      yourScore.setText("Opponent's Score: 0");
 
-		sender = new JTextField();
-		sender.addActionListener(this);
+      sender = new JTextField();
+      sender.addActionListener(this);
 
-		chat.add(yourScore,BorderLayout.NORTH);
-		chat.add(new JScrollPane(receiver),BorderLayout.CENTER); // 스크롤바를 위해  ScrollPane 이용
-		chat.add(sender,BorderLayout.SOUTH);
-		
-		c.add(chat);
-	
-		
-		setSize(500, 800); // 프레임 크기 조정
-		setVisible(true); // 프레임이 화면에 나타나도록 설정
-		
-		try {
-			setupConnection();
-		} catch (IOException e) {
-			handleError(e.getMessage());
-		}
-		
-		Thread th = new Thread(receiver); // 상대로부터 메시지 수신을 위한 스레드 생성
-		GR = new gameReciever();//클라이언트에서 받은 점수를 출력할 컴퍼넌트
-		Thread gR = new Thread(GR);//상대로부터 점수 수신을 위한 스레드 생성
-		th.start();
-		gR.start();
-	}
-	
-	private void setupConnection() throws IOException {
-		socket = new Socket("localhost", 9999); // 메세지용 소켓 생성
-		gsocket = new Socket("localhost", 9998); // 최종 점수용 소켓 생성
-		ssocket = new Socket("localhost", 9997); // 현재 점수용 소켓 생성
+      chat.add(yourScore,BorderLayout.NORTH);
+      chat.add(new JScrollPane(receiver),BorderLayout.CENTER); // 스크롤바를 위해  ScrollPane 이용
+      chat.add(sender,BorderLayout.SOUTH);
+      
+      c.add(chat);
+   
+      
+      setSize(500, 800); // 프레임 크기 조정
+      setVisible(true); // 프레임이 화면에 나타나도록 설정
+      
+      try {
+         setupConnection();
+      } catch (IOException e) {
+         handleError(e.getMessage());
+      }
+      GR = new gameReciever();
+      Thread th = new Thread(receiver); // 상대로부터 메시지 수신을 위한 스레드 생성
+      Thread gR = new Thread(GR);
+      th.start();
+      gR.start();
+   }
+   
+   private void setupConnection() throws IOException {
+      socket = new Socket("localhost", 9999); // 클라이언트 소켓 생성
+      gsocket = new Socket("localhost", 9998); // 클라이언트 소켓 생성
+      // System.out.println("연결됨");
+      receiver.append("상대방1이 입장하였습니다.\n");
+      int pos = receiver.getText().length();
+      receiver.setCaretPosition(pos); // caret 포지션을 가장 마지막으로 이동
+      
+      in = new BufferedReader(new InputStreamReader(socket.getInputStream())); // 클라이언트로부터의 입력 스트림
+      out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())); // 클라이언트로의 출력 스트림
+      
+      sin = new BufferedReader(new InputStreamReader(gsocket.getInputStream())); //클라이언트로부터의 입력 스트림
+      sout = new BufferedWriter(new OutputStreamWriter(gsocket.getOutputStream())); //클라이언트로의 출력 스트림
+      
+      cin = new BufferedReader(new InputStreamReader(gsocket.getInputStream())); //클라이언트로부터의 입력 스트림
+      cout = new BufferedWriter(new OutputStreamWriter(gsocket.getOutputStream())); //클라이언트로의 출력 스트림
 
-		receiver.append("상대방1이 입장하였습니다.\n");//연결됨
-		
-		int pos = receiver.getText().length();
-		receiver.setCaretPosition(pos); // caret 포지션을 가장 마지막으로 이동
-		
-		//메세지용
-		in = new BufferedReader(new InputStreamReader(socket.getInputStream())); // 클라이언트로부터의 입력 스트림
-		out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())); // 클라이언트로의 출력 스트림
-		//최종 점수용
-		cin = new BufferedReader(new InputStreamReader(gsocket.getInputStream())); //클라이언트로부터의 입력 스트림
-		cout = new BufferedWriter(new OutputStreamWriter(gsocket.getOutputStream())); //클라이언트로의 출력 스트림
-		//현재 점수용
-		sin = new BufferedReader(new InputStreamReader(ssocket.getInputStream())); //클라이언트로부터의 입력 스트림
-		sout = new BufferedWriter(new OutputStreamWriter(ssocket.getOutputStream())); //클라이언트로의 출력 스트림
-		
-	}
+      
+   }
 
 
-	private static void handleError(String string) {
-		System.out.println(string);
-		System.exit(1);
-	}
-	//메세지
-	private class Receiver extends JTextArea implements Runnable {
-		@Override
-		public void run() {
-			String msg = null;
-			while (true) {
-				try {
-					if(Tetris.gameEnd == true) {
-						GameEnd();
-						break;
-					}
-					msg = in.readLine(); // 상대로부터 한 행의 문자열 받기
-				} catch (IOException e) {
-					handleError(e.getMessage());
-				} 
-				this.append("\n  상대방1 : " + msg); // 받은 문자열을 JTextArea에 출력
-				int pos = this.getText().length();
-				this.setCaretPosition(pos); // caret(커서)을 가장 마지막으로 이동
-			}
-		}
-	}
-	@Override//메세지
-	public void actionPerformed(ActionEvent e) { // JTextField에 <Enter> 키 처리
-		if (e.getSource() == sender) {
-			String msg = sender.getText(); // 텍스트 필드에 사용자가 입력한 문자열
-			try {
-				out.write(msg+"\n"); // 문자열 전송
-				out.flush();
-				
-				receiver.append("\n클라이언트 : " + msg); // JTextArea에 출력
-				int pos = receiver.getText().length();
-				receiver.setCaretPosition(pos); // caret 포지션을 가장 마지막으로 이동
-				sender.setText(null); // 입력창의 문자열 지움
-			} catch (IOException e1) {
-				handleError(e1.getMessage());
-			} 
-		}
-	}
-	public void GameEnd() {
-		JOptionPane.showMessageDialog(null, "Game Over!\n", "테트리스", JOptionPane.ERROR_MESSAGE);
-	}
-	
-	//게임 스레드
-	private class gameReciever implements Runnable{
-			public void run() {			
-				int score = -1;
-				int currentScore = 0;
-				game.start();//게임 시작
-				client = false;
-				while (true) {					
-						try {
-							sendScoreToServer();//테트리스쪽에서 보내는 상대편 점수를 지속적으로 확인하는 함수
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}						
-						
-					try {					
-						score =Integer.parseInt(cin.readLine());
-						currentScore =Integer.parseInt(sin.readLine());//받고 int형으로 타입 변환
-						yourScore.setText("Opponent's Score: "+ currentScore);
-						if(score == -1) {//-1이면 아무것도 안함						
-						}
-						else {//점수가 있으면 내 점수와 비교해서 JOptionPane 출력	
-							String winner = "";
-							int cha = 0;
-							if(score > myscore) {
-								winner = "상대편";
-								cha=score-myscore;
-							}else if(score < myscore) {
-								winner = "당신";
-								cha = myscore - score;
-							}else {
-								winner= "동점";
-							}
-							if(!client) {
-							GameEnd(winner, cha);
-							}
-							
-						}
-						
-					} catch (IOException e) {
-						handleError(e.getMessage());
-					} 
-					}
-			}
-	}
-	// 값을 받아서 알맞은 JOptionPane 호출하는 함수
-	 private void GameEnd(String winner, int cha)  {
-		 client = true;
-		 if(winner == "동점") {
-	        	choiceC = JOptionPane.showConfirmDialog(null, "게임 오버!\n 동점입니다\n 재시작 하시겠습니까?", "user2", JOptionPane.YES_NO_OPTION);
-	        	System.out.println(choiceC);
-	        } else {
-		        
-		        choiceC = JOptionPane.showConfirmDialog(null, "게임 오버!\n"+cha+"차로 "+winner+"이 이겼습니다!", "user2", JOptionPane.YES_NO_OPTION);
-	        }
-	      
-	 }
-	
-	////테트리스쪽에서 보내는 상대편 점수를 지속적으로 확인하는 함수
-	public void sendScoreToServer() throws IOException {
-		
-		if(Tetris.gameEnd) {//테트리스 게임이 끝나면
-		 	myscore = Tetris.Currentscore;//최종 점수를 보내라
-		 	cout.write(myscore + "\n");
-		    cout.flush();
-		 }else {
-			 cout.write("-1"+ "\n");//게임이 진행중이면 -1를 보내라
-			    cout.flush();
-		 }
-			sout.write(myscore + "\n");//걍 보내라
-			sout.flush();
-		}
+   private static void handleError(String string) {
+      System.out.println(string);
+      System.exit(1);
+   }
+   
+   private class Receiver extends JTextArea implements Runnable {
+      @Override
+      public void run() {
+         String msg = null;
+         while (true) {
+            try {
+               if(Tetris.gameEnd == true) {
+                  GameEnd();
+                  break;
+               }
+               msg = in.readLine(); // 상대로부터 한 행의 문자열 받기
+            } catch (IOException e) {
+               handleError(e.getMessage());
+            } 
+            this.append("\n상대방1 : " + msg); // 받은 문자열을 JTextArea에 출력
+            int pos = this.getText().length();
+            this.setCaretPosition(pos); // caret(커서)을 가장 마지막으로 이동
+         }
+      }
+   }
+   //게임 스레드
+   private class gameReciever implements Runnable{
+         public void run() {
+            game.start();         
+            int score = -1;
+            while (true) {
+               
+                  try {
+                     sendScoreToServer();
+                  } catch (IOException e) {
+                     // TODO Auto-generated catch block
+                     e.printStackTrace();
+                  }                  
+                  
+               try {               
+                  score =Integer.parseInt(cin.readLine());
+                  System.out.println(score);
+                  if(score == -1) {
+//                     yourScore.setText("Opponent's Score: "+-(score));
+                  }
+                  else{
+                     String winner = "";
+                     if( score > myscore) {
+                        winner = "상대편";
+                     }else if(score < myscore){
+                        winner = "당신";
+                     }else {
+                        winner= "동점";
+                     }
+                     if(!client) {
+                     GameEnd(winner);
+                     }
+                  }
+                  
+               } catch (IOException e) {
+                  handleError(e.getMessage());
+               }             
+         
+         }      
+   }
+   }
+   
+    private void GameEnd(String winner) {
+       client = true;
+        if (winner.equals("동점")) {
+            JOptionPane.showMessageDialog(null, "게임 종료!\n동점입니다!\n5초 뒤 다시 재시작 합니다.", "상대방2", JOptionPane.ERROR_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null, "게임 종료!\n" + winner + "이 이겼습니다!\n5초 뒤 다시 재시작 합니다.", "상대방2", JOptionPane.ERROR_MESSAGE);
+        }
 
-	
-	public static void main(String[] args) {
-		new Client();
-	}
-		
-	}
+        try {
+            sendScoreToClient(); // 서버에서 클라이언트에게 스코어 전송
+            Thread.sleep(5000); // 5초 대기
+        } catch (IOException | InterruptedException e) {
+            handleError(e.getMessage());
+        }
 
+        // 게임 재시작 로직 추가
+        game.restartGame();
+    }
+   
+   @Override
+   public void actionPerformed(ActionEvent e) { // JTextField에 <Enter> 키 처리
+      if (e.getSource() == sender) {
+         String msg = sender.getText(); // 텍스트 필드에 사용자가 입력한 문자열
+         try {
+            out.write(msg+"\n"); // 문자열 전송
+            out.flush();
+            
+            receiver.append("\n상대방2 : " + msg); // JTextArea에 출력
+            int pos = receiver.getText().length();
+            receiver.setCaretPosition(pos); // caret 포지션을 가장 마지막으로 이동
+            sender.setText(null); // 입력창의 문자열 지움
+         } catch (IOException e1) {
+            handleError(e1.getMessage());
+         } 
+      }
+   }
+   public void GameEnd() {
+      JOptionPane.showMessageDialog(null, "Game Over!\n", "테트리스", JOptionPane.ERROR_MESSAGE);
+   }
+   
+
+   public void sendScoreToServer() throws IOException {
+      
+      if(Tetris.gameEnd) {
+          myscore = Tetris.Currentscore;
+          cout.write(myscore + "\n");
+          cout.flush();
+       }else {
+          cout.write("-1"+ "\n");
+             cout.flush();
+       }
+      }
+   public void sendScoreToClient() throws IOException {
+       
+       
+       if(Tetris.gameEnd) {
+         myscore = Tetris.Currentscore;
+          cout.write(myscore + "\n");
+          cout.flush();
+       }else {
+          cout.write("-1\n");
+          cout.flush();
+       }
+   }
+   
+   public static void main(String[] args) {
+      new Client();
+   }
+      
+   }
+//클라이언트
