@@ -22,6 +22,7 @@ public class Client extends JFrame implements ActionListener {
    //소켓
    private Socket socket = null;
    private Socket gsocket = null;
+   private Socket usocket = null;
    //메세지용
    private JPanel chat;
    private Receiver receiver = null; // JTextArea를 상속받고 Runnable 인터페이스를 구현한 클래스로서 받은 정보를 담는 객체
@@ -29,9 +30,10 @@ public class Client extends JFrame implements ActionListener {
    private gameReciever GR;
    //게임용
    private static int myscore =0;//이클래스만 쓰는 나의 점수
-   private JLabel yourScore;//너의 점수
+   private JLabel yourScore;//너의 점수를 담을 레이블
    private Tetris game;
    private int cha;//점수 차
+   private int Uscore;//너의 점수
   
    
    public Client() {
@@ -84,6 +86,7 @@ public class Client extends JFrame implements ActionListener {
    private void setupConnection() throws IOException {
       socket = new Socket("localhost", 9999); // 메세지용 클라이언트 소켓 생성
       gsocket = new Socket("localhost", 9998); // 게임용 클라이언트 소켓 생성
+      usocket = new Socket("localhost", 9997); // 게임용 클라이언트 소켓 생성
 
       receiver.append("상대방1이 입장하였습니다.\n");//연결됨
       
@@ -93,8 +96,8 @@ public class Client extends JFrame implements ActionListener {
       in = new BufferedReader(new InputStreamReader(socket.getInputStream())); // 메세지용
       out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));// 메세지용
       
-      sin = new BufferedReader(new InputStreamReader(gsocket.getInputStream())); //최종점수용
-      sout = new BufferedWriter(new OutputStreamWriter(gsocket.getOutputStream())); //클라이언트로의 출력 스트림
+      sin = new BufferedReader(new InputStreamReader(usocket.getInputStream())); //최종점수용
+      sout = new BufferedWriter(new OutputStreamWriter(usocket.getOutputStream())); //클라이언트로의 출력 스트림
       
       cin = new BufferedReader(new InputStreamReader(gsocket.getInputStream())); //최종점수용
       cout = new BufferedWriter(new OutputStreamWriter(gsocket.getOutputStream())); //최종점수용
@@ -156,9 +159,11 @@ public class Client extends JFrame implements ActionListener {
                   
                try {               
                   score =Integer.parseInt(cin.readLine());
+                  Uscore =Integer.parseInt(sin.readLine());
+                  yourScore.setText("Opponent's Score: "+Uscore);
                   System.out.println(score);
                   if(score == -1) {
-//                     yourScore.setText("Opponent's Score: "+-(score));
+//                     
                   }
                   else{
                      String winner = "";
@@ -215,6 +220,8 @@ public class Client extends JFrame implements ActionListener {
           cout.write("-1"+ "\n");
              cout.flush();
        }
+      sout.write(myscore+"\n");
+      sout.flush();
    }
    public static void main(String[] args) {
       new Client();
