@@ -71,27 +71,31 @@ public class Server extends JFrame implements ActionListener{
 			}
 		}
 		
-		@Override
-		public void actionPerformed(ActionEvent e) { // JTextField에 <Enter> 키 처리
-			if (e.getSource() == sender) {
-				String msg = sender.getText(); // 텍스트 필드에서 문자열 얻어옴
-				try {
-					out.write(msg+"\n"); // 문자열 전송
-					out.flush();
-					
-					receiver.append("\n서버 : " + msg);// JTextArea에 출력
-					int pos = receiver.getText().length();
-					receiver.setCaretPosition(pos); // caret 포지션을 가장 마지막으로 이동
-					sender.setText(null); // 입력창의 문자열 지움
-				} catch (IOException e1) {
-					handleError(e1.getMessage());
-				} 
-			}
-		}
+
 		
 		public static void main(String[] args) {
 			new Server();
 		}
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		if (e.getSource() == sender) {
+			String msg = sender.getText(); // 텍스트 필드에서 문자열 얻어옴
+			try {
+				out.write(msg+"\n"); // 문자열 전송
+				out.flush();
+				
+				receiver.append("\n서버 : " + msg);// JTextArea에 출력
+				int pos = receiver.getText().length();
+				receiver.setCaretPosition(pos); // caret 포지션을 가장 마지막으로 이동
+				sender.setText(null); // 입력창의 문자열 지움
+			} catch (IOException e1) {
+				handleError(e1.getMessage());
+			} 
+		}
+		
 	}
 }
 
