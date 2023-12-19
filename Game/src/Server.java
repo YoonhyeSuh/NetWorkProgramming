@@ -12,14 +12,18 @@ public class Server extends JFrame implements ActionListener{
    
    static boolean server = false;
    
-   
+   //버퍼
    private BufferedReader in = null;
    private BufferedWriter out = null;
    private BufferedReader cin = null;
    private BufferedWriter cout = null;
+   
+   //서버 소켓
    private ServerSocket listener = null;
-   private Socket socket = null;
    private ServerSocket glistener = null;
+   
+   //소켓
+   private Socket socket = null;
    private Socket gsocket = null;
    private Receiver receiver; // JTextArea를 상속받고 Runnable 인터페이스를 구현한 클래스로서 받은 정보를 담는 객체
    private gameReciever GR;
