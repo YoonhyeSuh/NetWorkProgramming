@@ -16,13 +16,13 @@ class Element{
    }
 }
 
-class Shape{
+class Block{
    Element current[] = new Element[4];
    int height = 1; // row
    int width = Tetris.Width/2; // column
    // x, y는 항상 도형의 좌측 최상단
    
-   Shape(int shapeNum){
+   Block(int shapeNum){
       switch (shapeNum) {
          //0~6 ㄱ ㅣ ㅁ ㄴ  어떤 모양이든 current[0]이 기준점(회전시 x,y / 내릴 나 옆으로 옮길때 x,y좌표 / colorNum 등
          case 0: // ㄱ 모양(세로로 긴)
@@ -107,7 +107,7 @@ public class Tetris extends JFrame implements Runnable{
    JButton board[][];
    
    int shapeNumber; // random함수로 0~6까지 나와서 makeBlock함수의 변수로 사용
-   Shape randomFigure; // makeBlock의 결과물(Element 배열을 가지고 있다)
+   Block randomFigure; // makeBlock의 결과물(Element 배열을 가지고 있다)
    Element[] newElment; // randomFigure의 리턴값을 받을 Element 배열
    Color colorBox[] = {Color.red, Color.blue, Color.yellow, Color.gray, Color.pink, Color.green, Color.orange};
 
@@ -258,8 +258,8 @@ public class Tetris extends JFrame implements Runnable{
       
    }
    // 랜덤 도형 생성 함수
-   public Shape makeBlock(int shapeNumber) {
-      Shape randomShape = new Shape(shapeNumber);
+   public Block makeBlock(int shapeNumber) {
+      Block randomShape = new Block(shapeNumber);
       
       return randomShape;
    }
