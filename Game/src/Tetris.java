@@ -5,74 +5,77 @@ import java.io.*;
 import javax.swing.*;
 
 class Element{
-   //중심점 x,y를 잡고 이것을 중심으로 +-으로 도형 표현할 것이다.
-   int centerHeight; // 중심점 X좌표
-   int centerWidth; // 중심점 Y좌표
-   int colorNum;
-   Element(int x, int y, int color){
-      this.centerHeight = x;
-      this.centerWidth = y;
-      this.colorNum = color;
-   }
-}
+	   //중심점 x,y를 잡고 이것을 중심으로 +-으로 블록 표현
+	   int centerX; // 중심점 X좌표
+	   int centerY; // 중심점 Y좌표
+	   int color;
+	   Element(int x, int y, int color){
+	      this.centerX = x;
+	      this.centerY = y;
+	      this.color = color;
+	   }
+	}
+
+
 
 class Block{
-   Element current[] = new Element[4];
-   int height = 1; // row
-   int width = Tetris.Width/2; // column
-   // x, y는 항상 도형의 좌측 최상단
-   
-   Block(int shapeNum){
-      switch (shapeNum) {
-         //0~6 ㄱ ㅣ ㅁ ㄴ  어떤 모양이든 current[0]이 기준점(회전시 x,y / 내릴 나 옆으로 옮길때 x,y좌표 / colorNum 등
-         case 0: // ㄱ 모양(세로로 긴)
-            current[0] = new Element(height, width, 0);
-            current[1] = new Element(height, width+1, 0);
-            current[2] = new Element(height+1, width+1, 0);
-            current[3] = new Element(height+2, width+1, 0);
-            break;
-         case 1: // ㅣ 모양
-            current[0] = new Element(height, width, 1);
-            current[1] = new Element(height+1, width, 1);
-            current[2] = new Element(height+2, width, 1);
-            current[3] = new Element(height+3, width, 1);
-            break;
-         case 2: // ㅁ 모양
-            current[0] = new Element(height, width, 2);
-            current[1] = new Element(height+1, width, 2);
-            current[2] = new Element(height, width+1, 2);
-            current[3] = new Element(height+1, width+1, 2);
-            break;
-         case 3: // ㄴ 모양 (가로로 긴)
-            current[0] = new Element(height, width, 3);
-            current[1] = new Element(height+1, width, 3);
-            current[2] = new Element(height+1, width+1, 3);
-            current[3] = new Element(height+1, width+2, 3);
-            break;
-         case 4: // z 모양
-            current[0] = new Element(height, width, 4);
-            current[1] = new Element(height, width+1, 4);
-            current[2] = new Element(height+1, width+1, 4);
-            current[3] = new Element(height+1, width+2, 4);
-            break;
-         case 5: // ㅗ모양
-            current[0] = new Element(height, width, 5);
-            current[1] = new Element(height+1, width-1, 5);
-            current[2] = new Element(height+1, width, 5);
-            current[3] = new Element(height+1, width+1, 5);
-            break;
-         case 6: // z' 모양
-            current[0] = new Element(height, width, 6);
-            current[1] = new Element(height, width+1, 6);
-            current[2] = new Element(height+1, width, 6);
-            current[3] = new Element(height+1, width-1, 6);
-            break;
-      }
-   }
-   public Element[] transferArray(){ // 랜덤 도형 넘버를 입력 받아서 모양배열을 구성한 뒤, 그리기 위해 배열을 리턴해준다.
-      return current;
-   }
-}
+	   Element current[] = new Element[4];
+	   int h = 1; //height  row
+	   int w = Tetris.Width/2; //width  column
+	   // x, y는 항상 도형의 좌측 최상단
+	   
+	   Block(int blockNum){
+	      switch (blockNum) {
+	         //current[0]을 기준점(회전시 x,y / 내릴 나 옆으로 옮길때 x,y좌표 / color 등
+	         case 0: // ㄱ 블록(세로로 긴)
+	            current[0] = new Element(h, w, 0);
+	            current[1] = new Element(h, w+1, 0);
+	            current[2] = new Element(h+1, w+1, 0);
+	            current[3] = new Element(h+2, w+1, 0);
+	            break;
+	         case 1: // ㅣ 블록
+	            current[0] = new Element(h, w, 1);
+	            current[1] = new Element(h+1, w, 1);
+	            current[2] = new Element(h+2, w, 1);
+	            current[3] = new Element(h+3, w, 1);
+	            break;
+	         case 2: // ㅁ 블록
+	            current[0] = new Element(h, w, 2);
+	            current[1] = new Element(h+1, w, 2);
+	            current[2] = new Element(h, w+1, 2);
+	            current[3] = new Element(h+1, w+1, 2);
+	            break;
+	         case 3: // ㄴ 블록 (가로로 긴)
+	            current[0] = new Element(h, w, 3);
+	            current[1] = new Element(h+1, w, 3);
+	            current[2] = new Element(h+1, w+1, 3);
+	            current[3] = new Element(h+1, w+2, 3);
+	            break;
+	         case 4: // z 블록
+	            current[0] = new Element(h, w, 4);
+	            current[1] = new Element(h, w+1, 4);
+	            current[2] = new Element(h+1, w+1, 4);
+	            current[3] = new Element(h+1, w+2, 4);
+	            break;
+	         case 5: // ㅗ 블록
+	            current[0] = new Element(h, w, 5);
+	            current[1] = new Element(h+1, w-1, 5);
+	            current[2] = new Element(h+1, w, 5);
+	            current[3] = new Element(h+1, w+1, 5);
+	            break;
+	         case 6: // z' 블록
+	            current[0] = new Element(h, w, 6);
+	            current[1] = new Element(h, w+1, 6);
+	            current[2] = new Element(h+1, w, 6);
+	            current[3] = new Element(h+1, w-1, 6);
+	            break;
+	      }
+	   }
+	   public Element[] transferArray(){ // 랜덤 도형 넘버를 입력 받아서 모양배열을 구성한 뒤, 그리기 위해 배열을 리턴해준다.
+	      return current;
+	   }
+	}
+
 
 public class Tetris extends JFrame implements Runnable{
    Timer gameTimer;
@@ -310,7 +313,7 @@ public class Tetris extends JFrame implements Runnable{
 // 현재 도형을 그리기
    public void drawCurrentBlock(){ 
       for(int i = 0 ; i < 4 ; i++) {
-         JButton jb = board[newElment[i].centerHeight][newElment[i].centerWidth];
+         JButton jb = board[newElment[i].centerX][newElment[i].centerY];
          jb.setBackground(colorArr[BlockNum]);
       }
    }
@@ -345,16 +348,16 @@ public class Tetris extends JFrame implements Runnable{
       
       Element [] updateElement = new Element[4];
       for(int i = 0 ; i < 4 ; i++) { // 이동용 배열을 생성
-         updateElement[i] = new Element(0,0,currentElement[i].colorNum);
+         updateElement[i] = new Element(0,0,currentElement[i].color);
       }
       switch (direction) {
       case 0: // right
          for(int i = 0 ; i < 4 ; i++) {
-            int tempHeight = currentElement[i].centerHeight; // 높이는 그대로
-            int tempWidth = currentElement[i].centerWidth + 1; // 오른쪽 이동이므로 가로좌표 + 1
+            int tempHeight = currentElement[i].centerX; // 높이는 그대로
+            int tempWidth = currentElement[i].centerY+ 1; // 오른쪽 이동이므로 가로좌표 + 1
             // return용 배열 복사해두기
-            updateElement[i].centerHeight = tempHeight;
-            updateElement[i].centerWidth = tempWidth;
+            updateElement[i].centerX = tempHeight;
+            updateElement[i].centerY = tempWidth;
 
             if(tempWidth > Width - 1) { // 오른쪽 이동이므로 Width의 경계값을 넘어가면 flag를 변경한다.
                flag = true; // 충돌
@@ -378,11 +381,11 @@ public class Tetris extends JFrame implements Runnable{
       
       case 1: // left
          for(int i = 0 ; i < 4 ; i++) {
-            int tempHeight = currentElement[i].centerHeight;
-            int tempWidth = currentElement[i].centerWidth - 1; // 왼쪽 이동이므로 가로좌표 - 1
+            int tempHeight = currentElement[i].centerX;
+            int tempWidth = currentElement[i].centerY - 1; // 왼쪽 이동이므로 가로좌표 - 1
             // return용 배열 복사해두기
-            updateElement[i].centerHeight = tempHeight;
-            updateElement[i].centerWidth = tempWidth;
+            updateElement[i].centerX = tempHeight;
+            updateElement[i].centerY = tempWidth;
 
             if(tempWidth < 0) { // 왼쪽 이동이므로 0의 경계값을 넘어가면 flag를 변경.
                flag = true;
@@ -406,11 +409,11 @@ public class Tetris extends JFrame implements Runnable{
          
       case 2: // down
          for(int i = 0 ; i < 4 ; i++) {
-            int tempHeight = currentElement[i].centerHeight + 1;  // 아래 이동이므로 세로좌표 + 1
-            int tempWidth = currentElement[i].centerWidth;
+            int tempHeight = currentElement[i].centerX + 1;  // 아래 이동이므로 세로좌표 + 1
+            int tempWidth = currentElement[i].centerY;
             // return용 배열 복사해두기
-            updateElement[i].centerHeight = tempHeight;
-            updateElement[i].centerWidth = tempWidth;
+            updateElement[i].centerX = tempHeight;
+            updateElement[i].centerY = tempWidth;
 
             if(tempHeight > Height - 1) { // 아래 이동이므로 Height의 경계값을 넘어가면 flag를 변경한다.
                flag = true;
@@ -433,24 +436,24 @@ public class Tetris extends JFrame implements Runnable{
          }
          
       case 3: // rotation
-         if(currentElement[0].colorNum == 2) // 정사각형은 회전 X
+         if(currentElement[0].color == 2) // 정사각형은 회전 X
             return currentElement;
-         int standardX = currentElement[0].centerHeight;
-         int standardY = currentElement[0].centerWidth;
+         int standardX = currentElement[0].centerX;
+         int standardY = currentElement[0].centerY;
          for(int i = 0 ; i < 4 ; i++) { // 3번만 회전
-            int tempHeight = standardX - currentElement[i].centerHeight; 
-            int tempWidth = standardY - currentElement[i].centerWidth;
+            int tempHeight = standardX - currentElement[i].centerX; 
+            int tempWidth = standardY - currentElement[i].centerY;
             // return용 배열 복사해두기
-            updateElement[i].centerHeight = standardX + tempWidth; // x = y
-            updateElement[i].centerWidth = standardY - tempHeight; // y = -x
+            updateElement[i].centerX = standardX + tempWidth; // x = y
+            updateElement[i].centerY = standardY - tempHeight; // y = -x
    
-            if(updateElement[i].centerHeight > Height - 1)
+            if(updateElement[i].centerX > Height - 1)
                   {
                flag = true; // 충돌
                break;
             }
-            if(updateElement[i].centerWidth > Width - 1 ||
-                  updateElement[i].centerWidth < 0) {
+            if(updateElement[i].centerY > Width - 1 ||
+                  updateElement[i].centerY < 0) {
             	Rflag = true;
                 break;
              }
@@ -497,13 +500,13 @@ public class Tetris extends JFrame implements Runnable{
    
    public void addBolckToRarray(Element[] block) { // 바닥에 닿았을시 recordArr에 입력
       for(int i = 0 ; i < 4 ; i++) {
-    	  recordArr[block[i].centerHeight][block[i].centerWidth] = block[i].colorNum;
+    	  recordArr[block[i].centerX][block[i].centerY] = block[i].color;
       }
    }
    public boolean checkCollisoin(Element[] block) { // 다른 블럭과 충돌 체크 함수(블럭이 움직이는 자리에 빈칸(-1)이 아닌 다른 수가 저장되어 있을 경우 false)
       boolean check = false;
       for(int i = 0 ; i < 4 ; i++) {
-         if( recordArr[block[i].centerHeight][block[i].centerWidth] != -1) {
+         if( recordArr[block[i].centerX][block[i].centerY] != -1) {
             check = true;
             break;
          }
