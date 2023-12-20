@@ -174,7 +174,9 @@ public class Tetris extends JFrame implements Runnable{
 
    
    public void start() { // 쓰레드 start 메소드
-      
+	   
+	   resetRecordArray(); // 배열 초기화
+	   drawBackGround(); // 테트리스 판 초기화
       gameTimer.start();
       needShape = true;
       main.setFocusable(true);
@@ -249,8 +251,7 @@ public class Tetris extends JFrame implements Runnable{
       gameTimer.stop();
       tetris = null; // thread에 null값을 넣어주기.   
       timePassed=0;   
-      resetRecordArray(); // 배열 초기화
-      drawBackGround(); // 테트리스 판 초기화
+    
       
       
    }
@@ -260,8 +261,8 @@ public class Tetris extends JFrame implements Runnable{
       
       return randomShape;
    }
-   
-   public void eraseFullRow() { // 줄 지우기 코드
+// 줄 지우기 코드
+   public void eraseFullRow() { 
       for(int row = 0 ; row < formHeight ; row++) {
          fullRow = true;
          for(int col = 0 ; col < formWidth ; col++) {
@@ -282,31 +283,41 @@ public class Tetris extends JFrame implements Runnable{
          }
       }
    }
-   
-   public void drawBackGround() { // 기록 배열에 기록되어 있는 정보를 통해 테트리스판에 paint
+// 기록 배열에 기록되어 있는 정보를 통해 테트리스판에 paint
+   public void drawBackGround() { 
+	   String [] arr = {"","G","A","M","E","O","V","E","R",""};
       for(int row = 2 ; row < formHeight ; row++) {
          for(int col = 0 ; col < formWidth ; col++) {
-            if(recordArray[row][col] == -1)
-               board[row][col].setBackground(Color.white);
-            else
+            if(recordArray[row][col] == -1) {
+               board[row][col].setBackground(Color.DARK_GRAY);
+               board[row][col].setBorder(null);
+         }
+            else {
                board[row][col].setBackground(colorBox[recordArray[row][col]]);
-         }
+            }
+     	}
       }
-      for(int i = 0 ; i <= 1 ; i++) {
+      for(int i = 0; i<= 1; i++) {
          for(int j = 0 ; j < formWidth ; j++) {
-            board[i][j].setBackground(Color.black);
+        	board[1][j].setText(arr[j]);
+        	board[0][j].setBackground(Color.DARK_GRAY);
+            board[1][j].setBackground(Color.LIGHT_GRAY);
+            board[i][j].setBorder(null);
+          
+ 
          }
       }
+      
    }
-   
-   public void drawCurrentShape() { // 현재 도형을 그리기
+// 현재 도형을 그리기
+   public void drawCurrentShape() { 
       for(int i = 0 ; i < 4 ; i++) {
          JButton jb = board[eleNew[i].centerHeight][eleNew[i].centerWidth];
          jb.setBackground(colorBox[shapeNumber]);
       }
    }
-      
-   public void move() { // 도형 이동 함수(left, right, down, rotation)
+// 도형 이동 함수(left, right, down, rotation)    
+   public void move() { 
          if(isLeft) {
             eleNew = moveShape(eleNew, leftDirection);
             isLeft = false;
@@ -353,7 +364,7 @@ public class Tetris extends JFrame implements Runnable{
             }
          }
          
-         //경계는 넘지 않았지만 다른 도형에 닿은 경우, 이 도형은 끝나고 새로운 도형이 필요하다.
+         //경계는 넘지 않았지만 다른 도형에 닿은 경우, 이 도형은 끝나고 새로운 도형이 필요.
          if(!flag && checkShapetoShape(updateElement)) { // 경계체크
             flag = true;
             needShape = true;
