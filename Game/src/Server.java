@@ -171,7 +171,9 @@ public class Server extends JFrame implements ActionListener{
    
    //게임 스레드
    private class gameReciever implements Runnable{
-    // private boolean gameRunning = true;
+
+	 // private boolean gameRunning = true;
+
       public void run() {
                   
          int score = -1;

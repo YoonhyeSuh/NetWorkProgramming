@@ -145,8 +145,9 @@ public class Client extends JFrame implements ActionListener {
    }
    //게임 스레드
    private class gameReciever implements Runnable{ 
-      //private boolean gameRunning = true;
-      
+
+	   //private boolean gameRunning = true;
+	   
          public void run() {
             game.start();         
             int score = -1;
