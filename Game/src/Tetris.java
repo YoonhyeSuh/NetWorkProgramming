@@ -178,6 +178,9 @@ public class Tetris extends JFrame implements Runnable{
 	   
 	  resetRecordArray(); // 배열 초기화
 	  drawBackGround(); // 테트리스 판 초기화
+	  gameScore = 0;
+      textGameScore.setText("Score : "+gameScore);
+	  
       gameTimer.start();
       needShape = true;
       main.setFocusable(true);
@@ -247,8 +250,6 @@ public class Tetris extends JFrame implements Runnable{
    public void End() {
 	   
       gameEnd = true;
-      gameScore = 0;
-      textGameScore.setText("Score : "+gameScore);
       gameTimer.stop();
       tetris = null; // thread에 null값을 넣어주기.   
       timePassed=0;   
