@@ -88,7 +88,7 @@ public class Client extends JFrame implements ActionListener {
       gsocket = new Socket("localhost", 9998); // 게임용 클라이언트 소켓 생성
       usocket = new Socket("localhost", 9997); // 게임용 클라이언트 소켓 생성
 
-      receiver.append("상대방1이 입장하였습니다.\n");//연결됨
+      receiver.append("user1이 입장하였습니다.\n");//연결됨
       
       int pos = receiver.getText().length();
       receiver.setCaretPosition(pos); // caret 포지션을 가장 마지막으로 이동
@@ -120,7 +120,7 @@ public class Client extends JFrame implements ActionListener {
             } catch (IOException e) {
                handleError(e.getMessage());
             } 
-            this.append("\n상대방1 : " + msg); // 받은 문자열을 JTextArea에 출력
+            this.append("\n상대방 : " + msg); // 받은 문자열을 JTextArea에 출력
             int pos = this.getText().length();
             this.setCaretPosition(pos); // caret(커서)을 가장 마지막으로 이동
          }
@@ -134,7 +134,7 @@ public class Client extends JFrame implements ActionListener {
             out.write(msg+"\n"); // 문자열 전송
             out.flush();
             
-            receiver.append("\n상대방2 : " + msg); // JTextArea에 출력
+            receiver.append("\n나 : " + msg); // JTextArea에 출력
             int pos = receiver.getText().length();
             receiver.setCaretPosition(pos); // caret 포지션을 가장 마지막으로 이동
             sender.setText(null); // 입력창의 문자열 지움
@@ -163,7 +163,7 @@ public class Client extends JFrame implements ActionListener {
                   score =Integer.parseInt(cin.readLine());//최종 점수 받음
                   Uscore =Integer.parseInt(sin.readLine());//현재 점수 받음
                   yourScore.setText("Opponent's Score: "+Uscore);//현재 점수 텍스트 바꾼다
-
+                  //System.out.print(Uscore);
                   if(score != -1) {//최종점수 아니면 계속 -1를 보내기 때문에 최종점수면   
                      String winner = "";
                      cha = 0;
