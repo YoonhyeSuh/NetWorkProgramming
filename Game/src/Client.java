@@ -161,11 +161,8 @@ public class Client extends JFrame implements ActionListener {
                   score =Integer.parseInt(cin.readLine());
                   Uscore =Integer.parseInt(sin.readLine());
                   yourScore.setText("Opponent's Score: "+Uscore);
-                  System.out.println(score);
-                  if(score == -1) {
-//                     
-                  }
-                  else{
+
+                  if(score != -1) {
                      String winner = "";
                      cha = 0;
                      if(score > myscore) {

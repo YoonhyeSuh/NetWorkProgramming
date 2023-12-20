@@ -190,10 +190,7 @@ public class Server extends JFrame implements ActionListener{
                score =Integer.parseInt(cin.readLine());
                Uscore =Integer.parseInt(sin.readLine());
                yourScore.setText("Opponent's Score: "+Uscore);
-               if(score == -1) {
-//                  yourScore.setText("Opponent's Score: "+-(score));
-               }
-               else {            
+               if(score != -1) {            
                   String winner = "";
                   cha = 0;
                   if(score > myscore) {
