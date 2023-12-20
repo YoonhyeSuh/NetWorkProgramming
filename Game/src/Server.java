@@ -134,22 +134,22 @@ public class Server extends JFrame implements ActionListener{
    }
    //메세지용
    private class Receiver extends JTextArea implements Runnable{
-	   public void run() {
-	         String msg = null;
-	         while (true) {
-	            try {
-	               msg = in.readLine(); // 상대로부터 한 행의 문자열 받기
-	            } catch (IOException e) {
-	               handleError(e.getMessage());
-	            } 
-	            this.append("\n상대방2 : " + msg); // 받은 문자열을 JTextArea에 출력
-	            int pos = this.getText().length();
-	            this.setCaretPosition(pos); // caret 포지션을 가장 마지막으로 이동
-	         }
-	      }   
+      public void run() {
+            String msg = null;
+            while (true) {
+               try {
+                  msg = in.readLine(); // 상대로부터 한 행의 문자열 받기
+               } catch (IOException e) {
+                  handleError(e.getMessage());
+               } 
+               this.append("\n상대방2 : " + msg); // 받은 문자열을 JTextArea에 출력
+               int pos = this.getText().length();
+               this.setCaretPosition(pos); // caret 포지션을 가장 마지막으로 이동
+            }
+         }   
    }
 
-	@Override
+   @Override
      public void actionPerformed(ActionEvent e) {
         // TODO Auto-generated method stub
         if (e.getSource() == sender) {
@@ -168,10 +168,12 @@ public class Server extends JFrame implements ActionListener{
         }
         
      }
-	
+   
    //게임 스레드
    private class gameReciever implements Runnable{
+
 	 // private boolean gameRunning = true;
+
       public void run() {
                   
          int score = -1;
@@ -222,17 +224,17 @@ public class Server extends JFrame implements ActionListener{
    
    
     private void GameEnd(String winner, int cha) throws IOException {
-    	server = true;
+       server = true;
         if (winner.equals("동점")) {
 //            JOptionPane.showMessageDialog(null, "게임 종료!\n동점입니다!\n5초 뒤 다시 재시작 합니다.", "user1", JOptionPane.ERROR_MESSAGE);
-        	JOptionPane.showMessageDialog(null, "게임 종료!\n동점입니다!\n", "user1", JOptionPane.ERROR_MESSAGE);
+           JOptionPane.showMessageDialog(null, "게임 종료!\n동점입니다!\n", "user1", JOptionPane.ERROR_MESSAGE);
         } else {
             //JOptionPane.showMessageDialog(null, "게임 종료!\n" +cha+"점차로 "+ winner + "이 이겼습니다!\n5초 뒤 다시 재시작 합니다.", "user1", JOptionPane.ERROR_MESSAGE);
-        	JOptionPane.showMessageDialog(null, "게임 종료!\n" +cha+"점차로 "+ winner + "이 이겼습니다!\n", "user1", JOptionPane.ERROR_MESSAGE);
+           JOptionPane.showMessageDialog(null, "게임 종료!\n" +cha+"점차로 "+ winner + "이 이겼습니다!\n", "user1", JOptionPane.ERROR_MESSAGE);
         }
 
 //        try {
-//        	sendScoreToClient();
+//           sendScoreToClient();
 //            Thread.sleep(5000); // 5초 대기
 //        } catch ( InterruptedException e) {
 //            handleError(e.getMessage());
@@ -244,7 +246,7 @@ public class Server extends JFrame implements ActionListener{
 
    
 
-	//테트리스 전역변수가 바뀌면 바뀐 값을 계속 상대방한테 보냄 
+   //테트리스 전역변수가 바뀌면 바뀐 값을 계속 상대방한테 보냄 
     public void sendScoreToClient() throws IOException {
        
        myscore = Tetris.Currentscore;

@@ -5,6 +5,7 @@ import java.io.*;
 import javax.swing.*;
 
 class Element{
+
 	   //중심점 x,y를 잡고 이것을 중심으로 +-으로 블록 표현
 	   int centerX; // 중심점 X좌표
 	   int centerY; // 중심점 Y좌표
@@ -19,6 +20,7 @@ class Element{
 
 
 class Block{
+
 	   Element current[] = new Element[4];
 	   int h = 1; //height  row
 	   int w = Tetris.Width/2; //width  column
@@ -77,6 +79,7 @@ class Block{
 	}
 
 
+
 public class Tetris extends JFrame implements Runnable{
    Timer gameTimer;
    
@@ -111,7 +114,9 @@ public class Tetris extends JFrame implements Runnable{
    
    int BlockNum; // random함수로 0~6까지 나와서 makeBlock함수의 변수로 사용
    Block random; // makeBlock의 결과물(Element 배열을 가지고 있다)
+
    Element[] newElment; // random의 리턴값을 받을 Element 배열
+
    Color colorArr[] = {Color.red, Color.blue, Color.yellow, Color.gray, Color.pink, Color.green, Color.orange};
 
    JPanel main, leftPanel;
@@ -141,7 +146,7 @@ public class Tetris extends JFrame implements Runnable{
       int seconds = timePassed % 60;
       String formattedTime = String.format("  Timer: %02d:%02d", minutes, seconds);
       timerLabel.setText(formattedTime);
-      if (timePassed >= 120) {// 2분후 게임 끝남
+      if (timePassed >= 90) {// 2분후 게임 끝남
             gameTimer.stop();            
                End();
             }
@@ -177,11 +182,17 @@ public class Tetris extends JFrame implements Runnable{
    
    public void start() { // 쓰레드 start 메소드
 	   
-	  resetRarray(); // 배열 초기화
-	  fillBackGround(); // 테트리스 판 초기화
-	  gameScore = 0;
+	   try {
+          Thread.sleep(5000); // 5초 후 게임 시작
+      } catch ( InterruptedException e) {
+          
+      }
+	   
+     resetRarray(); // 배열 초기화
+     fillBackGround(); // 테트리스 판 초기화
+     gameScore = 0;
       textGameScore.setText("Score : "+gameScore);
-	  
+     
       gameTimer.start();
       needBlock = true;
       main.setFocusable(true);
@@ -196,12 +207,14 @@ public class Tetris extends JFrame implements Runnable{
       try {
          while(!gameEnd) { //flag에 따라
             if(needBlock) { // 블럭이 필요한 경우 랜덤 생성
+
             	BlockNum = (int)Math.floor(Math.random()*7);// 0~6 
                random = makeBlock(BlockNum); // 랜덤 숫자를 함수에 넣어서 랜덤 도형 배열을 생성
                newElment = random.transferArray(); // NewBlock 배열로 생성한 도형배열을 복사
                needBlock = false; // 생성 후 false로 바꿔준다.
                if(checkCollisoin(newElment)) { // 종료조건 : 새로 생성되는 도형과 겹칠 시
             	   drawCurrentBlock(); // 도형 겹치는거 보여주고 종료
+
                    JOptionPane.showMessageDialog(null, "Game Over!\n"
                                  + "블럭 생성 구간까지 벽돌이 쌓이면 종료입니다.\n"
                                  + "최종 스코어 : " + gameScore+"\n 상대방은 아직 게임 중이니 기다려주세요.", "테트리스", JOptionPane.ERROR_MESSAGE);
@@ -226,10 +239,10 @@ public class Tetris extends JFrame implements Runnable{
    }
    //재시작 함수
    public void restartGame() {
-	    // 현재 게임 스레드 멈춤
-	    if (tetris != null && tetris.isAlive()) {
-	        tetris.interrupt();
-	    }
+       // 현재 게임 스레드 멈춤
+       if (tetris != null && tetris.isAlive()) {
+           tetris.interrupt();
+       }
 
 	    
 	    // 게임 변수 재설정
@@ -238,16 +251,17 @@ public class Tetris extends JFrame implements Runnable{
 	    timePassed = 0;
 	    needBlock = true;
 
-	    // 보드 clear
-	    resetRarray();
-	    fillBackGround();
 
-	    //새로 시작
-	    start();
-	}
+       // 보드 clear
+       resetRarray();
+       fillBackGround();
+
+       //새로 시작
+       start();
+   }
    //끝내기 함수
    public void End() {
-	   
+      
       gameEnd = true;
       gameTimer.stop();
       tetris = null; // thread에 null값을 넣어주기.   
@@ -265,28 +279,34 @@ public class Tetris extends JFrame implements Runnable{
 // 줄 지우기 함수
    public void eraseOneRow() { 
       for(int row = 0 ; row < Height ; row++) {
+
     	  oneRow = true;
          for(int col = 0 ; col < Width ; col++) {
             if(recordArr[row][col] == -1) {
             	oneRow = false;
+
             }   
          }
          if(oneRow) { // 해당 row가 모두 0이 아닐 경우
             for(int col = 0 ; col <Width ; col++) {
+
             	recordArr[row][col] = -1; // 해당 row 값 0으로 만들기
+
             }
             gameScore += plusScore; // 점수 더해주기
             textGameScore.setText("Score : "+ gameScore);
             Currentscore = gameScore;//전역변수에 저장
             for(int tempRow = row ; tempRow >0 ; tempRow--) { // 한 줄씩 밑으로 내려주기
+
             	recordArr[tempRow] = recordArr[tempRow-1];
+
             }
          }
       }
    }
 // 기록 배열에 기록되어 있는 정보를 통해 테트리스판에 paint
    public void fillBackGround() { 
-	   String [] arr = {"","G","A","M","E","O","V","E","R",""};
+      String [] arr = {"","G","A","M","E","O","V","E","R",""};
       for(int row = 2 ; row < Height ; row++) {
          for(int col = 0 ; col < Width ; col++) {
             if(recordArr[row][col] == -1) {
@@ -296,12 +316,12 @@ public class Tetris extends JFrame implements Runnable{
             else {
                board[row][col].setBackground(colorArr[recordArr[row][col]]);
             }
-     	}
+        }
       }
       for(int i = 0; i<= 1; i++) {
          for(int j = 0 ; j < Width ; j++) {
-        	board[1][j].setText(arr[j]);
-        	board[0][j].setBackground(Color.DARK_GRAY);
+           board[1][j].setText(arr[j]);
+           board[0][j].setBackground(Color.DARK_GRAY);
             board[1][j].setBackground(Color.LIGHT_GRAY);
             board[i][j].setBorder(null);
           
@@ -310,6 +330,7 @@ public class Tetris extends JFrame implements Runnable{
       }
       
    }
+  
 // 현재 도형을 그리기
    public void drawCurrentBlock(){ 
       for(int i = 0 ; i < 4 ; i++) {
@@ -317,27 +338,28 @@ public class Tetris extends JFrame implements Runnable{
          jb.setBackground(colorArr[BlockNum]);
       }
    }
+  
 // 도형 이동 함수(left, right, down, rotation)    
    public void move() { 
          if(isLeft) {
-        	 newElment = moveBlock(newElment, left);
+            newElement = moveBlock(newElement, left);
             isLeft = false;
          }
          else if(isRight) {
-        	 newElment = moveBlock(newElment, right);
+            newElement = moveBlock(newElement, right);
             isRight = false;
             }
          else if(isDown) { // 두 칸씩
-        	 newElment = moveBlock(newElment, down);
-        	 newElment = moveBlock(newElment, down);
+            newElement = moveBlock(newElement, down);
+            newElement = moveBlock(newElement, down);
             isDown = false;
          }
          else if(isRotation) {
-        	 newElment = moveBlock(newElment, rotation);
+            newElement = moveBlock(newElement, rotation);
             isRotation = false;
          }
          else
-        	 newElment = moveBlock(newElment, down);
+            newElement = moveBlock(newElement, down);
       }
    
    public Element[] moveBlock(Element[] currentElement, int direction) {
@@ -431,7 +453,7 @@ public class Tetris extends JFrame implements Runnable{
             return updateElement; // 이동이 가능하면 update배열을 리턴
          }
          else {
-        	 addBolckToRarray(currentElement); // 아래의 경우는 기록을 해야함.
+            addBolckToRarray(currentElement); // 아래의 경우는 기록을 해야함.
             return currentElement; // 이동이 불가능하면 기존 배열을 리턴 후 새로운 도형 생성
          }
          
