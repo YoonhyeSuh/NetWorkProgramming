@@ -19,7 +19,7 @@ class Element{
 class Shape{
    Element current[] = new Element[4];
    int height = 1; // row
-   int width = Tetris.formWidth/2; // column
+   int width = Tetris.Width/2; // column
    // x, y는 항상 도형의 좌측 최상단
    
    Shape(int shapeNum){
@@ -77,16 +77,17 @@ class Shape{
 public class Tetris extends JFrame implements Runnable{
    Timer gameTimer;
    
-   public static int timePassed = 0;
-   public static boolean gameEnd = false;
-   public static int Currentscore = 0;
+   public static int timePassed = 0;//타이머 변수
+   public static boolean gameEnd = false;//종료 여부 플래그
+   public static int Currentscore = 0; //현제 점수
    
-   static int formHeight = 20;
-   static int formWidth = 10;
-   static int rightDirection = 0;
-   static int leftDirection = 1;
-   static int downDirection = 2;
-   static int rotationDirection = 3;
+   static int Height = 20;// 폼 세로길이
+   static int Width = 10;// 폼 가로 길이
+   //switch 처리
+   static int right = 0;//오른쪽( 오른쪽 화살표)
+   static int left = 1;//왼쪽 (왼쪽 화살표)
+   static int down = 2;//아래 (아래 화살표)
+   static int rotation = 3;//회전 (스페이스바)
    
    static boolean isLeft = false;
    static boolean isRight = false;
@@ -110,7 +111,7 @@ public class Tetris extends JFrame implements Runnable{
    Element[] eleNew; // randomFigure의 리턴값을 받을 Element 배열
    Color colorBox[] = {Color.red, Color.blue, Color.yellow, Color.gray, Color.pink, Color.green, Color.orange};
 
-   JPanel main, left;
+   JPanel main, leftPanel;
    
    Thread tetris;
    
@@ -119,8 +120,8 @@ public class Tetris extends JFrame implements Runnable{
    
    public Tetris() {
       
-      left = new JPanel();
-      left.setLayout(new BorderLayout());
+      leftPanel = new JPanel();
+      leftPanel.setLayout(new BorderLayout());
       //상태 배치
       JPanel status = new JPanel();
       status.setLayout(new GridLayout(1,2));
@@ -145,19 +146,19 @@ public class Tetris extends JFrame implements Runnable{
       });
       status.add(textGameScore);
       status.add(timerLabel);
-      left.add(status,BorderLayout.NORTH);
+      leftPanel.add(status,BorderLayout.NORTH);
       
    
       main = new JPanel();
          
       // 테트리스 판 세팅
-      main.setLayout(new GridLayout(formHeight, formWidth));
+      main.setLayout(new GridLayout(Height, Width));
       
       
-      board = new JButton[formHeight][formWidth];
+      board = new JButton[Height][Width];
       
-      for(int row = 0 ; row < formHeight ; row++) {
-         for(int col = 0 ; col < formWidth ; col++) {
+      for(int row = 0 ; row < Height ; row++) {
+         for(int col = 0 ; col < Width ; col++) {
             board[row][col] = new JButton();
             main.add(board[row][col]);
             JButton bj = board[row][col];
@@ -167,7 +168,7 @@ public class Tetris extends JFrame implements Runnable{
       makeRecordArray(); // 기록용 배열 세팅
       drawBackGround(); // 테트리스 배경 세팅
       
-      left.add(main,BorderLayout.CENTER);
+      leftPanel.add(main,BorderLayout.CENTER);
       
       }
 
@@ -175,8 +176,11 @@ public class Tetris extends JFrame implements Runnable{
    
    public void start() { // 쓰레드 start 메소드
 	   
-	   resetRecordArray(); // 배열 초기화
-	   drawBackGround(); // 테트리스 판 초기화
+	  resetRecordArray(); // 배열 초기화
+	  drawBackGround(); // 테트리스 판 초기화
+	  gameScore = 0;
+      textGameScore.setText("Score : "+gameScore);
+	  
       gameTimer.start();
       needShape = true;
       main.setFocusable(true);
@@ -221,7 +225,7 @@ public class Tetris extends JFrame implements Runnable{
          System.out.println(e);
       }
    }
-   
+   //재시작 함수
    public void restartGame() {
 	    // 현재 게임 스레드 멈춤
 	    if (tetris != null && tetris.isAlive()) {
@@ -242,12 +246,10 @@ public class Tetris extends JFrame implements Runnable{
 	    //새로 시작
 	    start();
 	}
-   
+   //끝내기 함수
    public void End() {
 	   
       gameEnd = true;
-      gameScore = 0;
-      textGameScore.setText("Score : "+gameScore);
       gameTimer.stop();
       tetris = null; // thread에 null값을 넣어주기.   
       timePassed=0;   
@@ -255,28 +257,28 @@ public class Tetris extends JFrame implements Runnable{
       
       
    }
-   
-   public Shape makeShape(int shapeNumber) { // 랜덤 도형 생성 함수
+   // 랜덤 도형 생성 함수
+   public Shape makeShape(int shapeNumber) {
       Shape randomShape = new Shape(shapeNumber);
       
       return randomShape;
    }
-// 줄 지우기 코드
+// 줄 지우기 함수
    public void eraseFullRow() { 
-      for(int row = 0 ; row < formHeight ; row++) {
+      for(int row = 0 ; row < Height ; row++) {
          fullRow = true;
-         for(int col = 0 ; col < formWidth ; col++) {
+         for(int col = 0 ; col < Width ; col++) {
             if(recordArray[row][col] == -1) {
                fullRow = false;
             }   
          }
          if(fullRow) { // 해당 row가 모두 0이 아닐 경우
-            for(int col = 0 ; col <formWidth ; col++) {
+            for(int col = 0 ; col <Width ; col++) {
                recordArray[row][col] = -1; // 해당 row 값 0으로 만들기
             }
             gameScore += plusScore; // 점수 더해주기
             textGameScore.setText("Score : "+ gameScore);
-            Currentscore = gameScore;
+            Currentscore = gameScore;//전역변수에 저장
             for(int tempRow = row ; tempRow >0 ; tempRow--) { // 한 줄씩 밑으로 내려주기
                recordArray[tempRow] = recordArray[tempRow-1];
             }
@@ -286,8 +288,8 @@ public class Tetris extends JFrame implements Runnable{
 // 기록 배열에 기록되어 있는 정보를 통해 테트리스판에 paint
    public void drawBackGround() { 
 	   String [] arr = {"","G","A","M","E","O","V","E","R",""};
-      for(int row = 2 ; row < formHeight ; row++) {
-         for(int col = 0 ; col < formWidth ; col++) {
+      for(int row = 2 ; row < Height ; row++) {
+         for(int col = 0 ; col < Width ; col++) {
             if(recordArray[row][col] == -1) {
                board[row][col].setBackground(Color.DARK_GRAY);
                board[row][col].setBorder(null);
@@ -298,7 +300,7 @@ public class Tetris extends JFrame implements Runnable{
      	}
       }
       for(int i = 0; i<= 1; i++) {
-         for(int j = 0 ; j < formWidth ; j++) {
+         for(int j = 0 ; j < Width ; j++) {
         	board[1][j].setText(arr[j]);
         	board[0][j].setBackground(Color.DARK_GRAY);
             board[1][j].setBackground(Color.LIGHT_GRAY);
@@ -319,24 +321,24 @@ public class Tetris extends JFrame implements Runnable{
 // 도형 이동 함수(left, right, down, rotation)    
    public void move() { 
          if(isLeft) {
-            eleNew = moveShape(eleNew, leftDirection);
+            eleNew = moveShape(eleNew, left);
             isLeft = false;
          }
          else if(isRight) {
-            eleNew = moveShape(eleNew, rightDirection);
+            eleNew = moveShape(eleNew, right);
             isRight = false;
             }
          else if(isDown) { // 두 칸씩
-            eleNew = moveShape(eleNew, downDirection);
-            eleNew = moveShape(eleNew, downDirection);
+            eleNew = moveShape(eleNew, down);
+            eleNew = moveShape(eleNew, down);
             isDown = false;
          }
          else if(isRotation) {
-            eleNew = moveShape(eleNew, rotationDirection);
+            eleNew = moveShape(eleNew, rotation);
             isRotation = false;
          }
          else
-            eleNew = moveShape(eleNew, downDirection);
+            eleNew = moveShape(eleNew, down);
       }
    
    public Element[] moveShape(Element[] currentElement, int direction) {
@@ -358,7 +360,7 @@ public class Tetris extends JFrame implements Runnable{
             updateElement[i].centerHeight = tempHeight;
             updateElement[i].centerWidth = tempWidth;
 
-            if(tempWidth > formWidth - 1) { // 오른쪽 이동이므로 Width의 경계값을 넘어가면 flag를 변경한다.
+            if(tempWidth > Width - 1) { // 오른쪽 이동이므로 Width의 경계값을 넘어가면 flag를 변경한다.
                flag = true; // 충돌
                break;
             }
@@ -414,7 +416,7 @@ public class Tetris extends JFrame implements Runnable{
             updateElement[i].centerHeight = tempHeight;
             updateElement[i].centerWidth = tempWidth;
 
-            if(tempHeight > formHeight - 1) { // 아래 이동이므로 Height의 경계값을 넘어가면 flag를 변경한다.
+            if(tempHeight > Height - 1) { // 아래 이동이므로 Height의 경계값을 넘어가면 flag를 변경한다.
                flag = true;
                needShape = true;
                break;
@@ -446,12 +448,12 @@ public class Tetris extends JFrame implements Runnable{
             updateElement[i].centerHeight = standardX + tempWidth; // x = y
             updateElement[i].centerWidth = standardY - tempHeight; // y = -x
    
-            if(updateElement[i].centerHeight > formHeight - 1)
+            if(updateElement[i].centerHeight > Height - 1)
                   {
                flag = true; // 충돌
                break;
             }
-            if(updateElement[i].centerWidth > formWidth - 1 ||
+            if(updateElement[i].centerWidth > Width - 1 ||
                   updateElement[i].centerWidth < 0) {
                 rotationFlag = true;
                 break;
@@ -482,16 +484,16 @@ public class Tetris extends JFrame implements Runnable{
    }
    
    public void makeRecordArray() { // record용 array를 20*10배열 초기화
-      recordArray = new int[formHeight][formWidth];
-      for(int i = 0 ; i < formHeight ; i++) {
-         for(int j = 0 ; j < formWidth ; j++) {
+      recordArray = new int[Height][Width];
+      for(int i = 0 ; i < Height ; i++) {
+         for(int j = 0 ; j < Width ; j++) {
             recordArray[i][j] = -1;
          }
       }
    }
    public void resetRecordArray() { // record용 array를 초기값으로 초기화
-      for(int i = 0 ; i < formHeight ; i++) {
-         for(int j = 0 ; j < formWidth ; j++) {
+      for(int i = 0 ; i < Height ; i++) {
+         for(int j = 0 ; j < Width ; j++) {
             recordArray[i][j] = -1;
          }
       }

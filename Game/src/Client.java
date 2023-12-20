@@ -48,7 +48,7 @@ public class Client extends JFrame implements ActionListener {
       //테트리스 배치
       game = new Tetris();
       GR = new gameReciever();
-      c.add(game.left);
+      c.add(game.leftPanel);
       
       //채팅 배치
       chat = new JPanel();
@@ -193,20 +193,22 @@ public class Client extends JFrame implements ActionListener {
     private void GameEnd(String winner, int cha) throws IOException {
     	client = true;
         if (winner.equals("동점")) {
-            JOptionPane.showMessageDialog(null, "게임 종료!\n동점입니다!\n5초 뒤 다시 재시작 합니다.", "user2", JOptionPane.ERROR_MESSAGE);
+            //JOptionPane.showMessageDialog(null, "게임 종료!\n동점입니다!\n5초 뒤 다시 재시작 합니다.", "user2", JOptionPane.ERROR_MESSAGE);
+        	JOptionPane.showMessageDialog(null, "게임 종료!\n동점입니다!\n", "user2", JOptionPane.ERROR_MESSAGE);
         } else {
-            JOptionPane.showMessageDialog(null, "게임 종료!\n" +cha+"점차로 "+ winner + "이 이겼습니다!\n5초 뒤 다시 재시작 합니다.", "user2", JOptionPane.ERROR_MESSAGE);
+//            JOptionPane.showMessageDialog(null, "게임 종료!\n" +cha+"점차로 "+ winner + "이 이겼습니다!\n5초 뒤 다시 재시작 합니다.", "user2", JOptionPane.ERROR_MESSAGE);
+        	JOptionPane.showMessageDialog(null, "게임 종료!\n" +cha+"점차로 "+ winner + "이 이겼습니다!\n", "user2", JOptionPane.ERROR_MESSAGE);
         }
 
-        try {
-        	sendScoreToServer();
-            Thread.sleep(5000); // 5초 대기
-        } catch (InterruptedException e) {
-            handleError(e.getMessage());
-        }
-
-        // 게임 재시작 로직 추가
-        game.restartGame();
+//        try {
+//        	sendScoreToServer();
+//            Thread.sleep(5000); // 5초 대기
+//        } catch (InterruptedException e) {
+//            handleError(e.getMessage());
+//        }
+//
+//        // 게임 재시작 로직 추가
+//        game.restartGame();
     }
    
   //테트리스 전역변수가 바뀌면 바뀐 값을 계속 상대방한테 보냄 
