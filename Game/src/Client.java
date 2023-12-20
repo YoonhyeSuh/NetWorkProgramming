@@ -69,7 +69,7 @@ public class Client extends JFrame implements ActionListener {
       c.add(chat);
    
       
-      setSize(500, 800); // 프레임 크기 조정
+      setSize(500, 800);  // 프레임 크기 조정
       setVisible(true); // 프레임이 화면에 나타나도록 설정
       
       try {
@@ -144,25 +144,27 @@ public class Client extends JFrame implements ActionListener {
       }
    }
    //게임 스레드
-   private class gameReciever implements Runnable{
+   private class gameReciever implements Runnable{ 
+	   //private boolean gameRunning = true;
+	   
          public void run() {
             game.start();         
             int score = -1;
             while (true) {
                
                   try {
-                     sendScoreToServer();
+                     sendScoreToServer();//테트리스 전역변수가 바뀌면 바뀐 값을 계속 상대방한테 보냄 
                   } catch (IOException e) {
                      // TODO Auto-generated catch block
                      e.printStackTrace();
                   }                  
                   
                try {               
-                  score =Integer.parseInt(cin.readLine());
-                  Uscore =Integer.parseInt(sin.readLine());
-                  yourScore.setText("Opponent's Score: "+Uscore);
+                  score =Integer.parseInt(cin.readLine());//최종 점수 받음
+                  Uscore =Integer.parseInt(sin.readLine());//현재 점수 받음
+                  yourScore.setText("Opponent's Score: "+Uscore);//현재 점수 텍스트 바꾼다
 
-                  if(score != -1) {
+                  if(score != -1) {//최종점수 아니면 계속 -1를 보내기 때문에 최종점수면   
                      String winner = "";
                      cha = 0;
                      if(score > myscore) {
@@ -175,8 +177,11 @@ public class Client extends JFrame implements ActionListener {
                         winner= "동점";
                      }
                      if(!client) {
-                     GameEnd(winner, cha);
+                    GameEnd(winner, cha);
                      }
+                    //gameRunning = false;
+                     
+                     
                   }
                   
                } catch (IOException e) {

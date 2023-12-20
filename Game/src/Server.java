@@ -171,15 +171,15 @@ public class Server extends JFrame implements ActionListener{
 	
    //게임 스레드
    private class gameReciever implements Runnable{
+	 // private boolean gameRunning = true;
       public void run() {
                   
          int score = -1;
          game.start();
-         server = false;
          while (true) {
             
                try {
-                  sendScoreToClient();
+                  sendScoreToClient();//테트리스 전역변수가 바뀌면 바뀐 값을 계속 상대방한테 보냄 
                } catch (IOException e) {
                   // TODO Auto-generated catch block
                   e.printStackTrace();
@@ -187,10 +187,10 @@ public class Server extends JFrame implements ActionListener{
                
                
             try {               
-               score =Integer.parseInt(cin.readLine());
-               Uscore =Integer.parseInt(sin.readLine());
-               yourScore.setText("Opponent's Score: "+Uscore);
-               if(score != -1) {            
+               score =Integer.parseInt(cin.readLine());//최종 점수 받음
+               Uscore =Integer.parseInt(sin.readLine());//현재 점수 받음
+               yourScore.setText("Opponent's Score: "+Uscore);//현재 점수 텍스트 바꾼다
+               if(score != -1) { //최종점수 아니면 계속 -1를 보내기 때문에 최종점수면         
                   String winner = "";
                   cha = 0;
                   if(score > myscore) {
@@ -202,9 +202,11 @@ public class Server extends JFrame implements ActionListener{
                   }else {
                      winner= "동점";
                   }
-                  if(!server) {
+                  
+                 if(!server) {
                   GameEnd(winner, cha);
-                  }
+                 }
+                  //gameRunning = false; 
                   
                
                }
