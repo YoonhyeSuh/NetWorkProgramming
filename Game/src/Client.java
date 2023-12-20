@@ -145,6 +145,7 @@ public class Client extends JFrame implements ActionListener {
    }
    //게임 스레드
    private class gameReciever implements Runnable{ 
+
 	   //private boolean gameRunning = true;
 	   
          public void run() {
@@ -193,17 +194,17 @@ public class Client extends JFrame implements ActionListener {
    }
    
     private void GameEnd(String winner, int cha) throws IOException {
-    	client = true;
+       client = true;
         if (winner.equals("동점")) {
             //JOptionPane.showMessageDialog(null, "게임 종료!\n동점입니다!\n5초 뒤 다시 재시작 합니다.", "user2", JOptionPane.ERROR_MESSAGE);
-        	JOptionPane.showMessageDialog(null, "게임 종료!\n동점입니다!\n", "user2", JOptionPane.ERROR_MESSAGE);
+           JOptionPane.showMessageDialog(null, "게임 종료!\n동점입니다!\n", "user2", JOptionPane.ERROR_MESSAGE);
         } else {
 //            JOptionPane.showMessageDialog(null, "게임 종료!\n" +cha+"점차로 "+ winner + "이 이겼습니다!\n5초 뒤 다시 재시작 합니다.", "user2", JOptionPane.ERROR_MESSAGE);
-        	JOptionPane.showMessageDialog(null, "게임 종료!\n" +cha+"점차로 "+ winner + "이 이겼습니다!\n", "user2", JOptionPane.ERROR_MESSAGE);
+           JOptionPane.showMessageDialog(null, "게임 종료!\n" +cha+"점차로 "+ winner + "이 이겼습니다!\n", "user2", JOptionPane.ERROR_MESSAGE);
         }
 
 //        try {
-//        	sendScoreToServer();
+//           sendScoreToServer();
 //            Thread.sleep(5000); // 5초 대기
 //        } catch (InterruptedException e) {
 //            handleError(e.getMessage());
