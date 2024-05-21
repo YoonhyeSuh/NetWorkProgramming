@@ -114,9 +114,8 @@ public class Tetris extends JFrame implements Runnable{
    
    int BlockNum; // random함수로 0~6까지 나와서 makeBlock함수의 변수로 사용
    Block random; // makeBlock의 결과물(Element 배열을 가지고 있다)
-
-   Element[] newElment; // random의 리턴값을 받을 Element 배열
-
+   
+   Element[] newElement; // random의 리턴값을 받을 Element 배열
    Color colorArr[] = {Color.red, Color.blue, Color.yellow, Color.gray, Color.pink, Color.green, Color.orange};
 
    JPanel main, leftPanel;
@@ -210,9 +209,9 @@ public class Tetris extends JFrame implements Runnable{
 
             	BlockNum = (int)Math.floor(Math.random()*7);// 0~6 
                random = makeBlock(BlockNum); // 랜덤 숫자를 함수에 넣어서 랜덤 도형 배열을 생성
-               newElment = random.transferArray(); // NewBlock 배열로 생성한 도형배열을 복사
+               newElement = random.transferArray(); // NewBlock 배열로 생성한 도형배열을 복사
                needBlock = false; // 생성 후 false로 바꿔준다.
-               if(checkCollisoin(newElment)) { // 종료조건 : 새로 생성되는 도형과 겹칠 시
+               if(checkCollisoin(newElement)) { // 종료조건 : 새로 생성되는 도형과 겹칠 시
             	   drawCurrentBlock(); // 도형 겹치는거 보여주고 종료
 
                    JOptionPane.showMessageDialog(null, "Game Over!\n"
@@ -334,7 +333,7 @@ public class Tetris extends JFrame implements Runnable{
 // 현재 도형을 그리기
    public void drawCurrentBlock(){ 
       for(int i = 0 ; i < 4 ; i++) {
-         JButton jb = board[newElment[i].centerX][newElment[i].centerY];
+         JButton jb = board[newElement[i].centerX][newElement[i].centerY];
          jb.setBackground(colorArr[BlockNum]);
       }
    }
@@ -342,24 +341,25 @@ public class Tetris extends JFrame implements Runnable{
 // 도형 이동 함수(left, right, down, rotation)    
    public void move() { 
          if(isLeft) {
-            newElement = moveBlock(newElement, left);
+
+        	 newElement = moveBlock(newElement, left);
             isLeft = false;
          }
          else if(isRight) {
-            newElement = moveBlock(newElement, right);
+        	 newElement = moveBlock(newElement, right);
             isRight = false;
             }
          else if(isDown) { // 두 칸씩
-            newElement = moveBlock(newElement, down);
-            newElement = moveBlock(newElement, down);
+        	 newElement = moveBlock(newElement, down);
+        	 newElement = moveBlock(newElement, down);
             isDown = false;
          }
          else if(isRotation) {
-            newElement = moveBlock(newElement, rotation);
+        	 newElement = moveBlock(newElement, rotation);
             isRotation = false;
          }
          else
-            newElement = moveBlock(newElement, down);
+        	 newElement = moveBlock(newElement, down);
       }
    
    public Element[] moveBlock(Element[] currentElement, int direction) {

@@ -110,7 +110,7 @@ public class Server extends JFrame implements ActionListener{
       gsocket = glistener.accept(); //클라이언트로부터 연결 요청 대기
       usocket = ulistener.accept(); //클라이언트로부터 연결 요청 대기
       
-      receiver.append("상대방2이 입장하였습니다.\n"); 
+      receiver.append("user2이 입장하였습니다.\n"); 
       
       int pos = receiver.getText().length(); 
       receiver.setCaretPosition(pos); //caret 포지션을 가장 마지막으로 이동
@@ -134,19 +134,20 @@ public class Server extends JFrame implements ActionListener{
    }
    //메세지용
    private class Receiver extends JTextArea implements Runnable{
-      public void run() {
-            String msg = null;
-            while (true) {
-               try {
-                  msg = in.readLine(); // 상대로부터 한 행의 문자열 받기
-               } catch (IOException e) {
-                  handleError(e.getMessage());
-               } 
-               this.append("\n상대방2 : " + msg); // 받은 문자열을 JTextArea에 출력
-               int pos = this.getText().length();
-               this.setCaretPosition(pos); // caret 포지션을 가장 마지막으로 이동
-            }
-         }   
+
+	   public void run() {
+	         String msg = null;
+	         while (true) {
+	            try {
+	               msg = in.readLine(); // 상대로부터 한 행의 문자열 받기
+	            } catch (IOException e) {
+	               handleError(e.getMessage());
+	            } 
+	            this.append("\n상대방 : " + msg); // 받은 문자열을 JTextArea에 출력
+	            int pos = this.getText().length();
+	            this.setCaretPosition(pos); // caret 포지션을 가장 마지막으로 이동
+	         }
+	      }   
    }
 
    @Override
@@ -158,7 +159,7 @@ public class Server extends JFrame implements ActionListener{
               out.write(msg+"\n"); // 문자열 전송
               out.flush();
               
-              receiver.append("\n상대방1 : " + msg);// JTextArea에 출력
+              receiver.append("\n나 : " + msg);// JTextArea에 출력
               int pos = receiver.getText().length();
               receiver.setCaretPosition(pos); // caret 포지션을 가장 마지막으로 이동
               sender.setText(null); // 입력창의 문자열 지움
@@ -192,6 +193,7 @@ public class Server extends JFrame implements ActionListener{
                score =Integer.parseInt(cin.readLine());//최종 점수 받음
                Uscore =Integer.parseInt(sin.readLine());//현재 점수 받음
                yourScore.setText("Opponent's Score: "+Uscore);//현재 점수 텍스트 바꾼다
+               //System.out.print(Uscore);
                if(score != -1) { //최종점수 아니면 계속 -1를 보내기 때문에 최종점수면         
                   String winner = "";
                   cha = 0;
